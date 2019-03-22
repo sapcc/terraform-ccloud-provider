@@ -258,10 +258,20 @@ func resourceCCloudKubernetesCreate(d *schema.ResourceData, meta interface{}) er
 				newPool.AvailabilityZone = avz.(string)
 			}
 			if taints, ok := d.GetOk(fmt.Sprintf("node_pools.%d.taints", i)); ok {
-				newPool.Taints = taints.([]string)
+				t := taints.([]interface{})
+				for j := range t {
+					if taint, ok := d.GetOk(fmt.Sprintf("node_pools.%d.taints.%d", i, j)); ok {
+						newPool.Taints = append(newPool.Taints, taint.(string))
+					}
+				}
 			}
 			if labels, ok := d.GetOk(fmt.Sprintf("node_pools.%d.labels", i)); ok {
-				newPool.Labels = labels.([]string)
+				l := labels.([]interface{})
+				for j := range l {
+					if label, ok := d.GetOk(fmt.Sprintf("node_pools.%d.labels.%d", i, j)); ok {
+						newPool.Labels = append(newPool.Labels, label.(string))
+					}
+				}
 			}
 			cluster.Spec.NodePools = append(cluster.Spec.NodePools, newPool)
 		}
@@ -351,10 +361,20 @@ func resourceCCloudKubernetesUpdate(d *schema.ResourceData, meta interface{}) er
 				newPool.AvailabilityZone = avz.(string)
 			}
 			if taints, ok := d.GetOk(fmt.Sprintf("node_pools.%d.taints", i)); ok {
-				newPool.Taints = taints.([]string)
+				t := taints.([]interface{})
+				for j := range t {
+					if taint, ok := d.GetOk(fmt.Sprintf("node_pools.%d.taints.%d", i, j)); ok {
+						newPool.Taints = append(newPool.Taints, taint.(string))
+					}
+				}
 			}
 			if labels, ok := d.GetOk(fmt.Sprintf("node_pools.%d.labels", i)); ok {
-				newPool.Labels = labels.([]string)
+				l := labels.([]interface{})
+				for j := range l {
+					if label, ok := d.GetOk(fmt.Sprintf("node_pools.%d.labels.%d", i, j)); ok {
+						newPool.Labels = append(newPool.Labels, label.(string))
+					}
+				}
 			}
 			cluster.Spec.NodePools = append(cluster.Spec.NodePools, newPool)
 		}
