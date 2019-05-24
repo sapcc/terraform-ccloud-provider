@@ -43,7 +43,7 @@ satisfying the specified filter.
 resource "ccloud_arc_agent_v1" "agent_1" {
   filter = "@metadata_name = 'hostname'"
 
-  timeouts = {
+  timeouts {
     create = "10m"
   }
 }
@@ -68,7 +68,7 @@ resource "openstack_compute_instance_v2" "node" {
   flavor_name = "m1.small"
   user_data   = "${ccloud_arc_agent_bootstrap_v1.agent_1.user_data}"
 
-  network = {
+  network {
     name = "private_network"
   }
 }
@@ -77,7 +77,7 @@ resource "ccloud_arc_agent_v1" "agent_1" {
   # implicit dependency to avoid the deadlock during the destroy
   filter = "@metadata_name = '${local.hostname}'"
 
-  timeouts = {
+  timeouts {
     create = "10m"
     delete = "10m"
   }

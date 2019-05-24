@@ -32,7 +32,7 @@ resource "openstack_compute_instance_v2" "node" {
   flavor_name = "m1.small"
   user_data   = "${ccloud_arc_agent_bootstrap_v1.agent_1.user_data}"
 
-  network = {
+  network {
     name = "private_network"
   }
 }
@@ -51,7 +51,7 @@ resource "openstack_compute_instance_v2" "node" {
   flavor_name = "m1.large"
   user_data   = "${ccloud_arc_agent_bootstrap_v1.agent_1.user_data}"
 
-  network = {
+  network {
     name = "private_network"
   }
 }

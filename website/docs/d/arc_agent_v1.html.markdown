@@ -36,7 +36,7 @@ satisfying the specified filter.
 data "ccloud_arc_agent_v1" "agent_1" {
   filter  = "@metadata_name = 'hostname'"
 
-  timeouts = {
+  timeouts {
     read = "10m"
   }
 }
