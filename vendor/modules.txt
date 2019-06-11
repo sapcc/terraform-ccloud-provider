@@ -6,7 +6,7 @@ cloud.google.com/go/internal/optional
 cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
 cloud.google.com/go/compute/metadata
-# github.com/PuerkitoBio/purell v1.1.0
+# github.com/PuerkitoBio/purell v1.1.1
 github.com/PuerkitoBio/purell
 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
 github.com/PuerkitoBio/urlesc
@@ -68,18 +68,18 @@ github.com/fatih/color
 # github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 github.com/globalsign/mgo/bson
 github.com/globalsign/mgo/internal/json
-# github.com/go-openapi/analysis v0.17.2
+# github.com/go-openapi/analysis v0.18.0
 github.com/go-openapi/analysis
 github.com/go-openapi/analysis/internal
-# github.com/go-openapi/errors v0.17.2
+# github.com/go-openapi/errors v0.18.0
 github.com/go-openapi/errors
-# github.com/go-openapi/jsonpointer v0.17.2
+# github.com/go-openapi/jsonpointer v0.18.0
 github.com/go-openapi/jsonpointer
-# github.com/go-openapi/jsonreference v0.17.2
+# github.com/go-openapi/jsonreference v0.18.0
 github.com/go-openapi/jsonreference
-# github.com/go-openapi/loads v0.17.2
+# github.com/go-openapi/loads v0.18.0
 github.com/go-openapi/loads
-# github.com/go-openapi/runtime v0.18.0
+# github.com/go-openapi/runtime v0.19.0
 github.com/go-openapi/runtime
 github.com/go-openapi/runtime/client
 github.com/go-openapi/runtime/logger
@@ -88,13 +88,13 @@ github.com/go-openapi/runtime/middleware/denco
 github.com/go-openapi/runtime/middleware/header
 github.com/go-openapi/runtime/middleware/untyped
 github.com/go-openapi/runtime/security
-# github.com/go-openapi/spec v0.17.2
+# github.com/go-openapi/spec v0.18.0
 github.com/go-openapi/spec
-# github.com/go-openapi/strfmt v0.18.0
+# github.com/go-openapi/strfmt v0.19.0
 github.com/go-openapi/strfmt
-# github.com/go-openapi/swag v0.17.2
+# github.com/go-openapi/swag v0.18.0
 github.com/go-openapi/swag
-# github.com/go-openapi/validate v0.17.2
+# github.com/go-openapi/validate v0.18.0
 github.com/go-openapi/validate
 # github.com/golang/protobuf v1.3.0
 github.com/golang/protobuf/proto
@@ -103,14 +103,15 @@ github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 github.com/golang/protobuf/protoc-gen-go/descriptor
-# github.com/google/go-cmp v0.2.0
+# github.com/google/go-cmp v0.3.0
 github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
+github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
 # github.com/googleapis/gax-go/v2 v2.0.3
 github.com/googleapis/gax-go/v2
-# github.com/gophercloud/gophercloud v0.0.0-20190307220656-fe1ba5ce12dd
+# github.com/gophercloud/gophercloud v0.1.1-0.20190611014943-368f26bad44c
 github.com/gophercloud/gophercloud
 github.com/gophercloud/gophercloud/openstack
 github.com/gophercloud/gophercloud/openstack/compute/v2/servers
@@ -121,7 +122,7 @@ github.com/gophercloud/gophercloud/openstack/compute/v2/flavors
 github.com/gophercloud/gophercloud/openstack/compute/v2/images
 github.com/gophercloud/gophercloud/pagination
 github.com/gophercloud/gophercloud/openstack/identity/v2/tenants
-# github.com/gophercloud/utils v0.0.0-20190307223825-8644e0e18464
+# github.com/gophercloud/utils v0.0.0-20190527093828-25f1b77b8c03
 github.com/gophercloud/utils/openstack/clientconfig
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
@@ -130,7 +131,7 @@ github.com/hashicorp/go-cleanhttp
 # github.com/hashicorp/go-getter v1.3.0
 github.com/hashicorp/go-getter
 github.com/hashicorp/go-getter/helper/url
-# github.com/hashicorp/go-hclog v0.8.0
+# github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
 github.com/hashicorp/go-hclog
 # github.com/hashicorp/go-multierror v1.0.0
 github.com/hashicorp/go-multierror
@@ -143,7 +144,7 @@ github.com/hashicorp/go-safetemp
 github.com/hashicorp/go-uuid
 # github.com/hashicorp/go-version v1.1.0
 github.com/hashicorp/go-version
-# github.com/hashicorp/hcl v1.0.0
+# github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f
 github.com/hashicorp/hcl
 github.com/hashicorp/hcl/hcl/ast
 github.com/hashicorp/hcl/hcl/parser
@@ -164,14 +165,14 @@ github.com/hashicorp/hcl2/ext/typeexpr
 github.com/hashicorp/hcl2/ext/dynblock
 github.com/hashicorp/hcl2/hcl/json
 github.com/hashicorp/hcl2/hclwrite
-# github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93
+# github.com/hashicorp/hil v0.0.0-20190212112733-ab17b08d6590
 github.com/hashicorp/hil
 github.com/hashicorp/hil/ast
 github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v1.0.0
 github.com/hashicorp/logutils
-# github.com/hashicorp/terraform v0.12.0
+# github.com/hashicorp/terraform v0.12.1
 github.com/hashicorp/terraform/plugin
 github.com/hashicorp/terraform/helper/hashcode
 github.com/hashicorp/terraform/helper/pathorcontents
@@ -234,7 +235,7 @@ github.com/kayrus/gophercloud-arc/arc/v1/jobs
 github.com/kayrus/gophercloud-lyra/automation
 github.com/kayrus/gophercloud-lyra/automation/v1/automations
 github.com/kayrus/gophercloud-lyra/automation/v1/runs
-# github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329
+# github.com/mailru/easyjson v0.0.0-20190312143242-1de009706dbe
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
 github.com/mailru/easyjson/buffer
@@ -269,15 +270,15 @@ github.com/posener/complete
 github.com/posener/complete/cmd/install
 github.com/posener/complete/cmd
 github.com/posener/complete/match
-# github.com/sapcc/gophercloud-limes v0.0.0-20190305085625-07ecaa77e653
+# github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541
 github.com/sapcc/gophercloud-limes/resources
 github.com/sapcc/gophercloud-limes/resources/v1/domains
 github.com/sapcc/gophercloud-limes/resources/v1/projects
-# github.com/sapcc/kubernikus v0.0.0-20190315142052-6f464117b368
+# github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a
 github.com/sapcc/kubernikus/pkg/api/client/operations
 github.com/sapcc/kubernikus/pkg/api/models
 github.com/sapcc/kubernikus/pkg/cmd/printers
-# github.com/sapcc/limes v0.0.0-20190306133048-88a66de094d2
+# github.com/sapcc/limes v0.0.0-20190528142429-b76498a6f77f
 github.com/sapcc/limes
 # github.com/spf13/afero v1.2.1
 github.com/spf13/afero

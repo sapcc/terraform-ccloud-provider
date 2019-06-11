@@ -15,11 +15,11 @@ import (
 // swagger:model NodePoolConfig
 type NodePoolConfig struct {
 
-	// repair
-	Repair bool `json:"repair,omitempty"`
+	// Allow automatic drain and reboot of nodes. Enables OS updates. Required by security policy.
+	AllowReboot *bool `json:"allowReboot"`
 
-	// upgrade
-	Upgrade bool `json:"upgrade,omitempty"`
+	// Allow automatic drain and replacement of nodes. Enables Kubernetes upgrades.
+	AllowReplace *bool `json:"allowReplace"`
 }
 
 // Validate validates this node pool config
