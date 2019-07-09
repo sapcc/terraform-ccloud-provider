@@ -335,11 +335,6 @@ func resourceCCloudKubernetesV1Create(d *schema.ResourceData, meta interface{}) 
 		return kubernikusHandleErrorV1("Error waiting for running cluster state", err)
 	}
 
-	err = kubernikusWaitForNodePoolsV1(klient, cluster.Name, timeout)
-	if err != nil {
-		return kubernikusHandleErrorV1("Error waiting for cluster node pools active state", err)
-	}
-
 	return resourceCCloudKubernetesV1Read(d, meta)
 }
 
@@ -388,12 +383,15 @@ func resourceCCloudKubernetesV1Read(d *schema.ResourceData, meta interface{}) er
 
 	d.Set("region", GetRegion(d, config))
 
-	kubeConfigRaw, kubeConfig, err := getCredentials(klient, d.Id(), d.Get("kube_config_raw").(string))
-	if err != nil {
-		return err
+	// if cluster is in pending state, than there are no credentials yet
+	if result.Payload.Status.Phase != models.KlusterPhasePending {
+		kubeConfigRaw, kubeConfig, err := getCredentials(klient, d.Id(), d.Get("kube_config_raw").(string))
+		if err != nil {
+			return err
+		}
+		d.Set("kube_config", kubeConfig)
+		d.Set("kube_config_raw", kubeConfigRaw)
 	}
-	d.Set("kube_config", kubeConfig)
-	d.Set("kube_config_raw", kubeConfigRaw)
 
 	return nil
 }
@@ -431,15 +429,10 @@ func resourceCCloudKubernetesV1Update(d *schema.ResourceData, meta interface{}) 
 
 	o, n := d.GetChange("node_pools")
 
-	err = kubernikusUpdateNodePoolsV1(klient, cluster, o, n, timeout)
-	if err != nil {
-		return err
-	}
-
 	// wait for the cluster to be upgraded, when new API version was specified
 	target := "Running"
 	pending := []string{"Pending", "Creating", "Terminating", "Upgrading"}
-	err = kubernikusWaitForClusterV1(klient, d.Id(), target, pending, timeout)
+	err = kubernikusUpdateNodePoolsV1(klient, cluster, o, n, target, pending, timeout)
 	if err != nil {
 		return kubernikusHandleErrorV1("Error waiting for cluster to be updated", err)
 	}

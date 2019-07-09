@@ -202,89 +202,52 @@ func kubernikusKlusterV1GetPhase(klient *Kubernikus, target string, name string)
 		}
 
 		pretty, _ := json.MarshalIndent(result.Payload, "", "  ")
-		log.Printf("[DEBUG] Payload phase response: %s", string(pretty))
+		log.Printf("[DEBUG] Payload state response: %s", string(pretty))
 
 		if target != "Terminated" {
-			if result.Payload.Status.Phase == models.KlusterPhasePending {
-				events, err := klient.GetClusterEvents(operations.NewGetClusterEventsParams().WithName(name), klient.authFunc())
-				if err != nil {
-					return nil, "", err
+			events, err := klient.GetClusterEvents(operations.NewGetClusterEventsParams().WithName(name), klient.authFunc())
+			if err != nil {
+				return nil, "", err
+			}
+
+			if len(events.Payload) > 0 {
+				// check, whether there are error events
+				event := events.Payload[len(events.Payload)-1]
+				pretty, _ = json.MarshalIndent(event, "", "  ")
+				log.Printf("[DEBUG] Latest event response: %s", string(pretty))
+
+				if strings.Contains(event.Reason, "Error") || strings.Contains(event.Reason, "Failed") {
+					return nil, event.Reason, fmt.Errorf(event.Message)
 				}
-				if len(events.Payload) > 0 {
-					event := events.Payload[len(events.Payload)-1]
-					if event.Reason == "ConfigurationError" {
-						return nil, event.Reason, fmt.Errorf(event.Message)
+			}
+
+			for _, a := range result.Payload.Spec.NodePools {
+				// workaround for the upgrade status race condition
+				if result.Payload.Status.Phase == models.KlusterPhaseRunning &&
+					result.Payload.Spec.Version != result.Payload.Status.ApiserverVersion {
+					return result.Payload, string(models.KlusterPhaseUpgrading), nil
+				}
+
+				for _, s := range result.Payload.Status.NodePools {
+					if a.Name == s.Name {
+						// sometimes status size doesn't reflect the actual size, therefore we use "a.Size"
+						if a.Size != s.Healthy {
+							return result.Payload, "Pending", nil
+						}
 					}
 				}
 			}
 
-			// workaround for the upgrade status race condition
-			if result.Payload.Status.Phase == models.KlusterPhaseRunning &&
-				result.Payload.Spec.Version != result.Payload.Status.ApiserverVersion {
-				return result.Payload, string(models.KlusterPhaseUpgrading), nil
+			if len(result.Payload.Spec.NodePools) != len(result.Payload.Status.NodePools) {
+				return result.Payload, "Pending", nil
 			}
 		}
+
 		return result.Payload, string(result.Payload.Status.Phase), nil
 	}
 }
 
-func kubernikusWaitForNodePoolsV1(klient *Kubernikus, name string, timeout time.Duration) error {
-	log.Printf("[DEBUG] Waiting for %s cluster node pools to become active.", name)
-
-	stateConf := &resource.StateChangeConf{
-		Target:     []string{"active"},
-		Pending:    []string{"pending"},
-		Refresh:    kubernikusKlusterV1GetNodePoolState(klient, name),
-		Timeout:    timeout,
-		Delay:      1 * time.Second,
-		MinTimeout: 1 * time.Second,
-	}
-
-	_, err := stateConf.WaitForState()
-
-	return err
-}
-
-func kubernikusKlusterV1GetNodePoolState(klient *Kubernikus, name string) resource.StateRefreshFunc {
-	return func() (interface{}, string, error) {
-		result, err := klient.ShowCluster(operations.NewShowClusterParams().WithName(name), klient.authFunc())
-		if err != nil {
-			return nil, "", err
-		}
-
-		pretty, _ := json.MarshalIndent(result.Payload, "", "  ")
-		log.Printf("[DEBUG] Payload state response: %s", string(pretty))
-
-		if len(result.Payload.Spec.NodePools) != len(result.Payload.Status.NodePools) {
-			return result.Payload, "pending", nil
-		}
-		for _, a := range result.Payload.Spec.NodePools {
-			for _, s := range result.Payload.Status.NodePools {
-				if a.Name == s.Name {
-					// sometimes status size doesn't reflect the actual size, therefore we use "a.Size"
-					if a.Size != s.Healthy {
-						// check, whether there are error events
-						events, err := klient.GetClusterEvents(operations.NewGetClusterEventsParams().WithName(name), klient.authFunc())
-						if err != nil {
-							return nil, "", err
-						}
-						if len(events.Payload) > 0 {
-							event := events.Payload[len(events.Payload)-1]
-							if strings.Contains(event.Reason, "Error") || strings.Contains(event.Reason, "Failed") {
-								return nil, event.Reason, fmt.Errorf("%s node pool: %s", a.Name, event.Message)
-							}
-						}
-
-						return result.Payload, "pending", nil
-					}
-				}
-			}
-		}
-		return result.Payload, "active", nil
-	}
-}
-
-func kubernikusUpdateNodePoolsV1(klient *Kubernikus, cluster *models.Kluster, oldNodePoolsRaw, newNodePoolsRaw interface{}, timeout time.Duration) error {
+func kubernikusUpdateNodePoolsV1(klient *Kubernikus, cluster *models.Kluster, oldNodePoolsRaw, newNodePoolsRaw interface{}, target string, pending []string, timeout time.Duration) error {
 	var poolsToKeep []models.NodePool
 	var poolsToDelete []models.NodePool
 	oldNodePools, err := kubernikusExpandNodePoolsV1(oldNodePoolsRaw)
@@ -332,7 +295,7 @@ func kubernikusUpdateNodePoolsV1(klient *Kubernikus, cluster *models.Kluster, ol
 	if len(poolsToDelete) > 0 {
 		// downscale
 		cluster.Spec.NodePools = append(poolsToKeep, poolsToDelete...)
-		err = kubernikusUpdateAndWait(klient, cluster, timeout)
+		err = kubernikusUpdateAndWait(klient, cluster, target, pending, timeout)
 		if err != nil {
 			return err
 		}
@@ -340,7 +303,7 @@ func kubernikusUpdateNodePoolsV1(klient *Kubernikus, cluster *models.Kluster, ol
 
 	// delete old
 	cluster.Spec.NodePools = poolsToKeep
-	err = kubernikusUpdateAndWait(klient, cluster, timeout)
+	err = kubernikusUpdateAndWait(klient, cluster, target, pending, timeout)
 	if err != nil {
 		return err
 	}
@@ -348,7 +311,7 @@ func kubernikusUpdateNodePoolsV1(klient *Kubernikus, cluster *models.Kluster, ol
 	if !reflect.DeepEqual(poolsToKeep, newNodePools) {
 		// create new
 		cluster.Spec.NodePools = newNodePools
-		err = kubernikusUpdateAndWait(klient, cluster, timeout)
+		err = kubernikusUpdateAndWait(klient, cluster, target, pending, timeout)
 		if err != nil {
 			return err
 		}
@@ -368,7 +331,7 @@ func kubernikusHandleErrorV1(msg string, err error) error {
 	return err
 }
 
-func kubernikusUpdateAndWait(klient *Kubernikus, cluster *models.Kluster, timeout time.Duration) error {
+func kubernikusUpdateAndWait(klient *Kubernikus, cluster *models.Kluster, target string, pending []string, timeout time.Duration) error {
 	pretty, _ := json.MarshalIndent(cluster, "", "  ")
 	log.Printf("[DEBUG] Payload request: %s", string(pretty))
 
@@ -376,13 +339,14 @@ func kubernikusUpdateAndWait(klient *Kubernikus, cluster *models.Kluster, timeou
 	if err != nil {
 		return kubernikusHandleErrorV1("Error updating cluster", err)
 	}
-	err = kubernikusWaitForNodePoolsV1(klient, cluster.Name, timeout)
-	if err != nil {
-		return kubernikusHandleErrorV1("Error waiting for cluster node pools active state", err)
-	}
 
 	pretty, _ = json.MarshalIndent(result.Payload, "", "  ")
 	log.Printf("[DEBUG] Payload response: %s", string(pretty))
+
+	err = kubernikusWaitForClusterV1(klient, cluster.Name, target, pending, timeout)
+	if err != nil {
+		return kubernikusHandleErrorV1("Error waiting for cluster node pools Running state", err)
+	}
 
 	return nil
 }
