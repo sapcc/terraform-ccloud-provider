@@ -220,6 +220,7 @@ func Provider() terraform.ResourceProvider {
 			"ccloud_arc_job_v1":       dataSourceCCloudArcJobV1(),
 			"ccloud_arc_job_ids_v1":   dataSourceCCloudArcJobIDsV1(),
 			"ccloud_automation_v1":    dataSourceCCloudAutomationV1(),
+			"ccloud_kubernetes_bootstrap_v1": dataSourceCCloudKubernetesBootstrapV1(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

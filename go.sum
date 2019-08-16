@@ -334,6 +334,12 @@ github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541 h1:rWKMPSj
 github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541/go.mod h1:+CE/Fj6tEVycQJBEKxDTAJdwTpFRAJpX1+yd2+fISUo=
 github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a h1:cOilBdTAmbEprHC2KB/gZoPVTd8joLLHqlT2PRKyXr4=
 github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a/go.mod h1:myK1pthNZIGRz7BRoztctl69QaZzj69fbGr4WvzEJ2M=
+github.com/sapcc/kubernikus v0.0.0-20190812122454-2953ffe15061 h1:U4m4pMOYMmB+9Yv1bD6Py8V3p5/Kvxyj50TYHii+7AY=
+github.com/sapcc/kubernikus v0.0.0-20190812122454-2953ffe15061/go.mod h1:myK1pthNZIGRz7BRoztctl69QaZzj69fbGr4WvzEJ2M=
+github.com/sapcc/kubernikus v0.0.0-20190816095202-9c4a699229f4 h1:OJtxhef4zkZwEW7VpTSKONCJOnoptVl8jFbA0bWqgQk=
+github.com/sapcc/kubernikus v0.0.0-20190816095202-9c4a699229f4/go.mod h1:myK1pthNZIGRz7BRoztctl69QaZzj69fbGr4WvzEJ2M=
+github.com/sapcc/kubernikus v1.5.0 h1:2oPZbQzbGVhE/0G6kE8eZ031itulsupRl1rVVbSeCRo=
+github.com/sapcc/kubernikus v1.5.0/go.mod h1:myK1pthNZIGRz7BRoztctl69QaZzj69fbGr4WvzEJ2M=
 github.com/sapcc/limes v0.0.0-20190311092800-fb212143c5f5/go.mod h1:Fq0sDroTbraRqiS+OWjf8GFMREFVgrF8nhvJ76SgAk4=
 github.com/sapcc/limes v0.0.0-20190528142429-b76498a6f77f h1:szoWwWEUbnD64DaFf8STn2tLFcSY1wSLvg0oR7h5fv0=
 github.com/sapcc/limes v0.0.0-20190528142429-b76498a6f77f/go.mod h1:Fq0sDroTbraRqiS+OWjf8GFMREFVgrF8nhvJ76SgAk4=
