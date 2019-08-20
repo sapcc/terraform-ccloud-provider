@@ -99,6 +99,13 @@ func resourceCCloudKubernetesV1() *schema.Resource {
 				Optional: true,
 			},
 
+			"no_cloud": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+				Default:  false,
+			},
+
 			"version": {
 				Type:         schema.TypeString,
 				Optional:     true,
@@ -306,6 +313,7 @@ func resourceCCloudKubernetesV1Create(d *schema.ResourceData, meta interface{}) 
 	cluster.Spec.DNSAddress = d.Get("dns_address").(string)
 	cluster.Spec.DNSDomain = d.Get("dns_domain").(string)
 	cluster.Spec.SSHPublicKey = d.Get("ssh_public_key").(string)
+	cluster.Spec.NoCloud = d.Get("no_cloud").(bool)
 	cluster.Spec.ServiceCIDR = d.Get("service_cidr").(string)
 	cluster.Spec.Version = d.Get("version").(string)
 	cluster.Spec.NodePools, err = kubernikusExpandNodePoolsV1(d.Get("node_pools"))
@@ -374,6 +382,7 @@ func resourceCCloudKubernetesV1Read(d *schema.ResourceData, meta interface{}) er
 	d.Set("dns_domain", result.Payload.Spec.DNSDomain)
 	d.Set("name", result.Payload.Spec.Name)
 	d.Set("ssh_public_key", result.Payload.Spec.SSHPublicKey)
+	d.Set("no_cloud", result.Payload.Spec.NoCloud)
 	d.Set("service_cidr", result.Payload.Spec.ServiceCIDR)
 	d.Set("version", result.Payload.Spec.Version)
 	d.Set("phase", result.Payload.Status.Phase)

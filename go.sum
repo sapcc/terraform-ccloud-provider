@@ -332,8 +332,8 @@ github.com/prometheus/procfs v0.0.0-20180725123919-05ee40e3a273/go.mod h1:c3At6R
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
 github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541 h1:rWKMPSjDiQdSulbB32lYwZUuN6zZLvTt8aQafl1rTjk=
 github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541/go.mod h1:+CE/Fj6tEVycQJBEKxDTAJdwTpFRAJpX1+yd2+fISUo=
-github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a h1:cOilBdTAmbEprHC2KB/gZoPVTd8joLLHqlT2PRKyXr4=
-github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a/go.mod h1:myK1pthNZIGRz7BRoztctl69QaZzj69fbGr4WvzEJ2M=
+github.com/sapcc/kubernikus v0.0.0-20190819120232-22dc5161a9ff h1:LuR4+G02uE1Az8zXCR23/M+JCtFUor7TjtPNOE5wcwU=
+github.com/sapcc/kubernikus v0.0.0-20190819120232-22dc5161a9ff/go.mod h1:myK1pthNZIGRz7BRoztctl69QaZzj69fbGr4WvzEJ2M=
 github.com/sapcc/limes v0.0.0-20190311092800-fb212143c5f5/go.mod h1:Fq0sDroTbraRqiS+OWjf8GFMREFVgrF8nhvJ76SgAk4=
 github.com/sapcc/limes v0.0.0-20190528142429-b76498a6f77f h1:szoWwWEUbnD64DaFf8STn2tLFcSY1wSLvg0oR7h5fv0=
 github.com/sapcc/limes v0.0.0-20190528142429-b76498a6f77f/go.mod h1:Fq0sDroTbraRqiS+OWjf8GFMREFVgrF8nhvJ76SgAk4=

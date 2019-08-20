@@ -135,6 +135,9 @@ The following arguments are supported:
 * `ssh_public_key` - (Optional) The SSH public key, which should be used to
   authenticate the default SSH user (`core` for CoreOS images).
 
+* `no_cloud` - (Optional) Disable all Kubernetes cloud providers. Defaults to
+  `false`. Changing this forces a new resource to be created.
+
 * `version` - (Optional) The version of the Kubernetes master.
 
 * `node_pools` - (Optional) The list of Kubernetes node pools (worker pools).

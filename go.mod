@@ -14,7 +14,7 @@ require (
 	github.com/kayrus/gophercloud-lyra v0.0.0-20190312091744-e39ec87bb953
 	github.com/pkg/errors v0.8.1
 	github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541
-	github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a
+	github.com/sapcc/kubernikus v0.0.0-20190819120232-22dc5161a9ff
 	github.com/sapcc/limes v0.0.0-20190528142429-b76498a6f77f
 	k8s.io/apimachinery v0.0.0-20190612125636-6a5db36e93ad // indirect
 	k8s.io/client-go v11.0.0+incompatible
