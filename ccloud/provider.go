@@ -215,11 +215,12 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"ccloud_arc_agent_v1":     dataSourceCCloudArcAgentV1(),
-			"ccloud_arc_agent_ids_v1": dataSourceCCloudArcAgentIDsV1(),
-			"ccloud_arc_job_v1":       dataSourceCCloudArcJobV1(),
-			"ccloud_arc_job_ids_v1":   dataSourceCCloudArcJobIDsV1(),
-			"ccloud_automation_v1":    dataSourceCCloudAutomationV1(),
+			"ccloud_arc_agent_v1":       dataSourceCCloudArcAgentV1(),
+			"ccloud_arc_agent_ids_v1":   dataSourceCCloudArcAgentIDsV1(),
+			"ccloud_arc_job_v1":         dataSourceCCloudArcJobV1(),
+			"ccloud_arc_job_ids_v1":     dataSourceCCloudArcJobIDsV1(),
+			"ccloud_automation_v1":      dataSourceCCloudAutomationV1(),
+			"ccloud_billing_masterdata": dataSourceCCloudBillingMasterdata(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -228,6 +229,7 @@ func Provider() terraform.ResourceProvider {
 			"ccloud_arc_job_v1":             resourceCCloudArcJobV1(),
 			"ccloud_automation_v1":          resourceCCloudAutomationV1(),
 			"ccloud_automation_run_v1":      resourceCCloudAutomationRunV1(),
+			"ccloud_billing_masterdata":     resourceCCloudBillingMasterdata(),
 			"ccloud_quota":                  resourceCCloudProjectQuotaV1(),
 			"ccloud_quota_v1":               resourceCCloudProjectQuotaV1(),
 			"ccloud_project_quota_v1":       resourceCCloudProjectQuotaV1(),

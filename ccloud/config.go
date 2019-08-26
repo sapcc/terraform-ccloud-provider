@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/kayrus/gophercloud-arc/arc"
 	"github.com/kayrus/gophercloud-lyra/automation"
+	"github.com/sapcc/gophercloud-billing/billing"
 	"github.com/sapcc/gophercloud-limes/resources"
 )
 
@@ -287,7 +288,7 @@ func (c *Config) arcV1Client(region string) (*gophercloud.ServiceClient, error) 
 		return client, err
 	}
 
-	// Check if an endpoint override was specified for the image service.
+	// Check if an endpoint override was specified for the arc service.
 	client = c.determineEndpoint(client, "arc")
 
 	return client, nil
@@ -303,7 +304,7 @@ func (c *Config) automationV1Client(region string) (*gophercloud.ServiceClient, 
 		return client, err
 	}
 
-	// Check if an endpoint override was specified for the image service.
+	// Check if an endpoint override was specified for the automation service.
 	client = c.determineEndpoint(client, "automation")
 
 	return client, nil
@@ -321,6 +322,22 @@ func (c *Config) computeV2Client(region string) (*gophercloud.ServiceClient, err
 
 	// Check if an endpoint override was specified for the compute service.
 	client = c.determineEndpoint(client, "compute")
+
+	return client, nil
+}
+
+func (c *Config) billingClient(region string) (*gophercloud.ServiceClient, error) {
+	client, err := billing.NewBilling(c.OsClient, gophercloud.EndpointOpts{
+		Region:       c.determineRegion(region),
+		Availability: c.getEndpointType(),
+	})
+
+	if err != nil {
+		return client, err
+	}
+
+	// Check if an endpoint override was specified for the billing service.
+	client = c.determineEndpoint(client, "billing")
 
 	return client, nil
 }
