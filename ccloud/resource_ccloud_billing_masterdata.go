@@ -225,54 +225,6 @@ func resourceCCloudBillingMasterdata() *schema.Resource {
 	}
 }
 
-func resourceCCloudBillingMasterdataRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
-	billing, err := config.billingClient(GetRegion(d, config))
-	if err != nil {
-		return fmt.Errorf("Error creating OpenStack billing client: %s", err)
-	}
-
-	project, err := projects.Get(billing, d.Id()).Extract()
-	if err != nil {
-		return fmt.Errorf("Error getting billing project masterdata: %s", err)
-	}
-
-	log.Printf("[DEBUG] Retrieved project masterdata: %+v", project)
-
-	d.Set("project_id", project.ProjectID)
-	d.Set("project_name", project.ProjectName)
-	d.Set("domain_id", project.DomainID)
-	d.Set("domain_name", project.DomainName)
-	d.Set("description", project.Description)
-	d.Set("parent_id", project.ParentID)
-	d.Set("project_type", project.ProjectType)
-	d.Set("responsible_primary_contact_id", project.ResponsiblePrimaryContactID)
-	d.Set("responsible_primary_contact_email", project.ResponsiblePrimaryContactEmail)
-	d.Set("responsible_operator_id", project.ResponsibleOperatorID)
-	d.Set("responsible_operator_email", project.ResponsibleOperatorEmail)
-	d.Set("responsible_security_expert_id", project.ResponsibleSecurityExpertID)
-	d.Set("responsible_security_expert_email", project.ResponsibleSecurityExpertEmail)
-	d.Set("responsible_product_owner_id", project.ResponsibleProductOwnerID)
-	d.Set("responsible_product_owner_email", project.ResponsibleProductOwnerEmail)
-	d.Set("responsible_controller_id", project.ResponsibleControllerID)
-	d.Set("responsible_controller_email", project.ResponsibleControllerEmail)
-	d.Set("revenue_relevance", project.RevenueRelevance)
-	d.Set("business_criticality", project.BusinessCriticality)
-	d.Set("number_of_endusers", project.NumberOfEndusers)
-	d.Set("additional_information", project.AdditionalInformation)
-	d.Set("cost_object", billingFlattenCostObject(project.CostObject))
-	d.Set("created_at", project.CreatedAt.Format(time.RFC3339))
-	d.Set("changed_at", project.ChangedAt.Format(time.RFC3339))
-	d.Set("changed_by", project.ChangedBy)
-	d.Set("is_complete", project.IsComplete)
-	d.Set("missing_attributes", project.MissingAttributes)
-	d.Set("collector", project.Collector)
-
-	d.Set("region", GetRegion(d, config))
-
-	return nil
-}
-
 func resourceCCloudBillingMasterdataCreateOrUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	billing, err := config.billingClient(GetRegion(d, config))
@@ -355,4 +307,52 @@ func resourceCCloudBillingMasterdataCreateOrUpdate(d *schema.ResourceData, meta 
 	}
 
 	return resourceCCloudBillingMasterdataRead(d, meta)
+}
+
+func resourceCCloudBillingMasterdataRead(d *schema.ResourceData, meta interface{}) error {
+	config := meta.(*Config)
+	billing, err := config.billingClient(GetRegion(d, config))
+	if err != nil {
+		return fmt.Errorf("Error creating OpenStack billing client: %s", err)
+	}
+
+	project, err := projects.Get(billing, d.Id()).Extract()
+	if err != nil {
+		return fmt.Errorf("Error getting billing project masterdata: %s", err)
+	}
+
+	log.Printf("[DEBUG] Retrieved project masterdata: %+v", project)
+
+	d.Set("project_id", project.ProjectID)
+	d.Set("project_name", project.ProjectName)
+	d.Set("domain_id", project.DomainID)
+	d.Set("domain_name", project.DomainName)
+	d.Set("description", project.Description)
+	d.Set("parent_id", project.ParentID)
+	d.Set("project_type", project.ProjectType)
+	d.Set("responsible_primary_contact_id", project.ResponsiblePrimaryContactID)
+	d.Set("responsible_primary_contact_email", project.ResponsiblePrimaryContactEmail)
+	d.Set("responsible_operator_id", project.ResponsibleOperatorID)
+	d.Set("responsible_operator_email", project.ResponsibleOperatorEmail)
+	d.Set("responsible_security_expert_id", project.ResponsibleSecurityExpertID)
+	d.Set("responsible_security_expert_email", project.ResponsibleSecurityExpertEmail)
+	d.Set("responsible_product_owner_id", project.ResponsibleProductOwnerID)
+	d.Set("responsible_product_owner_email", project.ResponsibleProductOwnerEmail)
+	d.Set("responsible_controller_id", project.ResponsibleControllerID)
+	d.Set("responsible_controller_email", project.ResponsibleControllerEmail)
+	d.Set("revenue_relevance", project.RevenueRelevance)
+	d.Set("business_criticality", project.BusinessCriticality)
+	d.Set("number_of_endusers", project.NumberOfEndusers)
+	d.Set("additional_information", project.AdditionalInformation)
+	d.Set("cost_object", billingFlattenCostObject(project.CostObject))
+	d.Set("created_at", project.CreatedAt.Format(time.RFC3339))
+	d.Set("changed_at", project.ChangedAt.Format(time.RFC3339))
+	d.Set("changed_by", project.ChangedBy)
+	d.Set("is_complete", project.IsComplete)
+	d.Set("missing_attributes", project.MissingAttributes)
+	d.Set("collector", project.Collector)
+
+	d.Set("region", GetRegion(d, config))
+
+	return nil
 }
