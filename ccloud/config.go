@@ -337,7 +337,7 @@ func (c *Config) billingClient(region string) (*gophercloud.ServiceClient, error
 	}
 
 	// Check if an endpoint override was specified for the billing service.
-	client = c.determineEndpoint(client, "billing")
+	client = c.determineEndpoint(client, "sapcc-billing")
 
 	return client, nil
 }
