@@ -257,7 +257,11 @@ func resourceCCloudBillingMasterdataCreateOrUpdate(d *schema.ResourceData, meta 
 		// or during the update, when project_id was already set
 		project, err = projects.Get(billing, projectID).Extract()
 		if err != nil {
-			return fmt.Errorf("Error getting billing project masterdata: %s", err)
+			if d.Id() != "" {
+				return fmt.Errorf("Error getting billing project masterdata: %s", err)
+			}
+			log.Printf("[DEBUG] Error getting billing project masterdata, probably this project was not created yet: %s", err)
+			project = &projects.Project{ProjectID: projectID}
 		}
 	}
 
