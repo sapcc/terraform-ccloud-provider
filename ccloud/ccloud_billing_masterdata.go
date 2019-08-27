@@ -6,17 +6,15 @@ import (
 )
 
 func billingFlattenCostObject(co projects.CostObject) []map[string]interface{} {
-	var res []map[string]interface{}
-
-	return append(res, map[string]interface{}{
+	return []map[string]interface{}{{
 		"inherited": co.Inherited,
 		"name":      co.Name,
 		"type":      co.Type,
-	})
+	}}
 }
 
 func billingExpandCostObject(raw interface{}) projects.CostObject {
-	co := projects.CostObject{}
+	var co projects.CostObject
 
 	if raw != nil {
 		if v, ok := raw.([]interface{}); ok {
