@@ -9,9 +9,9 @@ import (
 	"github.com/sapcc/gophercloud-billing/billing/projects"
 )
 
-func dataSourceCCloudBillingMasterdata() *schema.Resource {
+func dataSourceCCloudBillingProjectMasterdata() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceCCloudBillingMasterdataRead,
+		Read: dataSourceCCloudBillingProjectMasterdataRead,
 
 		Schema: map[string]*schema.Schema{
 			"region": {
@@ -180,7 +180,7 @@ func dataSourceCCloudBillingMasterdata() *schema.Resource {
 	}
 }
 
-func dataSourceCCloudBillingMasterdataRead(d *schema.ResourceData, meta interface{}) error {
+func dataSourceCCloudBillingProjectMasterdataRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	billing, err := config.billingClient(GetRegion(d, config))
 	if err != nil {

@@ -11,11 +11,11 @@ import (
 	"github.com/sapcc/gophercloud-billing/billing/projects"
 )
 
-func resourceCCloudBillingMasterdata() *schema.Resource {
+func resourceCCloudBillingProjectMasterdata() *schema.Resource {
 	return &schema.Resource{
-		Read:   resourceCCloudBillingMasterdataRead,
-		Update: resourceCCloudBillingMasterdataCreateOrUpdate,
-		Create: resourceCCloudBillingMasterdataCreateOrUpdate,
+		Read:   resourceCCloudBillingProjectMasterdataRead,
+		Update: resourceCCloudBillingProjectMasterdataCreateOrUpdate,
+		Create: resourceCCloudBillingProjectMasterdataCreateOrUpdate,
 		Delete: schema.RemoveFromState,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -226,7 +226,7 @@ func resourceCCloudBillingMasterdata() *schema.Resource {
 	}
 }
 
-func resourceCCloudBillingMasterdataCreateOrUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCCloudBillingProjectMasterdataCreateOrUpdate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	billing, err := config.billingClient(GetRegion(d, config))
 	if err != nil {
@@ -311,10 +311,10 @@ func resourceCCloudBillingMasterdataCreateOrUpdate(d *schema.ResourceData, meta 
 		d.SetId(opts.ProjectID)
 	}
 
-	return resourceCCloudBillingMasterdataRead(d, meta)
+	return resourceCCloudBillingProjectMasterdataRead(d, meta)
 }
 
-func resourceCCloudBillingMasterdataRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCCloudBillingProjectMasterdataRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	billing, err := config.billingClient(GetRegion(d, config))
 	if err != nil {
@@ -323,7 +323,7 @@ func resourceCCloudBillingMasterdataRead(d *schema.ResourceData, meta interface{
 
 	project, err := projects.Get(billing, d.Id()).Extract()
 	if err != nil {
-		return fmt.Errorf("Error getting billing project masterdata: %s", err)
+		return CheckDeleted(d, err, "Error getting billing project masterdata")
 	}
 
 	log.Printf("[DEBUG] Retrieved project masterdata: %+v", project)
