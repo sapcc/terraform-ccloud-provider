@@ -42,24 +42,24 @@ The following arguments are supported:
 
 * `project_id` - (Optional) A project ID. Available only for users with an
   admin access. Defaults to the current project scope.
-* 
+
 * `project_name` - (Optional) A human-readable name for the project. Available
   only for users with an admin access.
-* 
+
 * `domain_id` - (Optional) A domain ID in which the project is contained.
   Available only for users with an admin access.
-* 
+
 * `domain_name` - (Optional) A domain name in which the project is contained.
   Available only for users with an admin access.
-* 
+
 * `parent_id` - (Optional) A project parent ID. Available only for users with
   an admin access.
-* 
+
 * `project_type` - (Optional) A project type. Available only for users with an
   admin access.
-* 
+
 * `description` - (Optional) A project description.
-* 
+
 * `revenue_relevance` - (Optional) Indicating if the project is directly or
   indirectly creating revenue. Can either be `generating`", `enabling` or
   `other`.
@@ -72,36 +72,36 @@ The following arguments are supported:
 
 * `additional_information` - (Optional) Freetext field for additional
   information for project.
- 
+
 * `responsible_primary_contact_id` - (Optional) SAP-User-Id of primary contact
   for the project.
- 
+
 * `responsible_primary_contact_email` - (Optional) Email-address of primary
   contact for the project.
- 
+
 * `responsible_operator_id` - (Optional) SAP-User-Id of the person who is
   responsible for operating the project.
- 
+
 * `responsible_operator_email` - (Optional) Email-address or DL of the
   person/group who is operating the project.
- 
+
 * `responsible_security_expert_id` - (Optional) SAP-User-Id of the person who is
   responsible for the security of the project.
- 
+
 * `responsible_security_expert_email` - (Optional) Email-address or DL of the
   person/group who is responsible for the security of the project.
- 
+
 * `responsible_product_owner_id` - (Optional) SAP-User-Id of the product owner.
- 
+
 * `responsible_product_owner_email` - (Optional) Email-address or DL of the
   product owner.
- 
+
 * `responsible_controller_id` - (Optional) SAP-User-Id of the controller who is
   responsible for the project / the costobject.
- 
+
 * `responsible_controller_email` - (Optional) Email-address or DL of the
   person/group who is controlling the project / the costobject.
- 
+
 * `cost_object` - (Optional) The cost object. The `cost_object` object structure
   is documented below.
 
