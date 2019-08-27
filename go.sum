@@ -364,6 +364,8 @@ github.com/prometheus/procfs v0.0.0-20190117184657-bf6a532e95b1/go.mod h1:c3At6R
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6SoW27p1b0cqNHllgS5HIMJraePCO15w5zCzIWYg=
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
+github.com/sapcc/gophercloud-billing v0.0.0-20190827085140-a84d7328467d h1:reeR4TJOdZXHMFHVAoBxSRXcFpU+IwGy8T4uHW3K9a4=
+github.com/sapcc/gophercloud-billing v0.0.0-20190827085140-a84d7328467d/go.mod h1:uhQ4vAOoeIwrkPwnqtAI8Ann9Ki9G0iGHbbgnO6j1qw=
 github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541 h1:rWKMPSjDiQdSulbB32lYwZUuN6zZLvTt8aQafl1rTjk=
 github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541/go.mod h1:+CE/Fj6tEVycQJBEKxDTAJdwTpFRAJpX1+yd2+fISUo=
 github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a h1:cOilBdTAmbEprHC2KB/gZoPVTd8joLLHqlT2PRKyXr4=

@@ -13,6 +13,7 @@ require (
 	github.com/kayrus/gophercloud-arc v0.0.0-20190312091753-2e63bfbb62aa
 	github.com/kayrus/gophercloud-lyra v0.0.0-20190312091744-e39ec87bb953
 	github.com/pkg/errors v0.8.1
+	github.com/sapcc/gophercloud-billing v0.0.0-20190827085140-a84d7328467d
 	github.com/sapcc/gophercloud-limes v0.0.0-20190319123021-2ed8e1224541
 	github.com/sapcc/kubernikus v0.0.0-20190607150640-1c55acfb983a
 	github.com/sapcc/limes v0.0.0-20190528142429-b76498a6f77f
