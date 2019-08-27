@@ -1,7 +1,7 @@
 ---
 layout: "ccloud"
 page_title: "Converged Cloud: ccloud_billing_masterdata"
-sidebar_current: "docs-ccloud-data-source-billing-masterdata"
+sidebar_current: "docs-ccloud-datasource-billing-masterdata"
 description: |-
   Get information on Project Billing Masterdata
 ---
