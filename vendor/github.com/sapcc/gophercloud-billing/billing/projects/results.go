@@ -3,7 +3,6 @@ package projects
 import (
 	"encoding/json"
 	"time"
-	//"log"
 
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/pagination"
@@ -13,7 +12,7 @@ type commonResult struct {
 	gophercloud.Result
 }
 
-// Extract is a function that accepts a result and extracts an project
+// Extract is a function that accepts a result and extracts a project
 // resource.
 func (r commonResult) Extract() (*Project, error) {
 	var s Project
@@ -26,13 +25,13 @@ func (r commonResult) ExtractInto(v interface{}) error {
 }
 
 // GetResult represents the result of a get operation. Call its Extract method
-// to interpret it as an Project.
+// to interpret it as a Project.
 type GetResult struct {
 	commonResult
 }
 
 // UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as an Project.
+// method to interpret it as a Project.
 type UpdateResult struct {
 	commonResult
 }
@@ -159,7 +158,7 @@ type ProjectPage struct {
 	pagination.SinglePageBase
 }
 
-// ExtractProjects accepts a Page struct, specifically an ProjectPage
+// ExtractProjects accepts a Page struct, specifically a ProjectPage
 // struct, and extracts the elements into a slice of Project structs. In
 // other words, a generic collection is mapped into a relevant slice.
 func ExtractProjects(r pagination.Page) ([]Project, error) {

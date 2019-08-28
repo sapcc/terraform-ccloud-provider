@@ -17,7 +17,7 @@ func NewBilling(client *gophercloud.ProviderClient, endpointOpts gophercloud.End
 	return &gophercloud.ServiceClient{
 		ProviderClient: client,
 		Endpoint:       url,
-		Type:           "spacc-billing",
+		Type:           "sapcc-billing",
 		ResourceBase:   resourceBase,
 	}, nil
 }

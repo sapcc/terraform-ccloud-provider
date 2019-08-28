@@ -6,7 +6,7 @@ import (
 )
 
 // List returns a Pager which allows you to iterate over a collection of
-// projects. It accepts a ListOpts struct.
+// projects.
 func List(c *gophercloud.ServiceClient) pagination.Pager {
 	return pagination.NewPager(c, listURL(c), func(r pagination.PageResult) pagination.Page {
 		return ProjectPage{pagination.SinglePageBase(r)}

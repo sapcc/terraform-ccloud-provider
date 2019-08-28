@@ -220,6 +220,7 @@ func Provider() terraform.ResourceProvider {
 			"ccloud_arc_job_v1":                 dataSourceCCloudArcJobV1(),
 			"ccloud_arc_job_ids_v1":             dataSourceCCloudArcJobIDsV1(),
 			"ccloud_automation_v1":              dataSourceCCloudAutomationV1(),
+			"ccloud_billing_domain_masterdata":  dataSourceCCloudBillingDomainMasterdata(),
 			"ccloud_billing_project_masterdata": dataSourceCCloudBillingProjectMasterdata(),
 		},
 
@@ -229,6 +230,7 @@ func Provider() terraform.ResourceProvider {
 			"ccloud_arc_job_v1":                 resourceCCloudArcJobV1(),
 			"ccloud_automation_v1":              resourceCCloudAutomationV1(),
 			"ccloud_automation_run_v1":          resourceCCloudAutomationRunV1(),
+			"ccloud_billing_domain_masterdata":  resourceCCloudBillingDomainMasterdata(),
 			"ccloud_billing_project_masterdata": resourceCCloudBillingProjectMasterdata(),
 			"ccloud_quota":                      resourceCCloudProjectQuotaV1(),
 			"ccloud_quota_v1":                   resourceCCloudProjectQuotaV1(),
