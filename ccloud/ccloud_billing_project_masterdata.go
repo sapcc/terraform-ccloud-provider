@@ -5,7 +5,7 @@ import (
 	"github.com/sapcc/gophercloud-billing/billing/projects"
 )
 
-func billingFlattenCostObject(co projects.CostObject) []map[string]interface{} {
+func billingProjectFlattenCostObject(co projects.CostObject) []map[string]interface{} {
 	return []map[string]interface{}{{
 		"inherited": co.Inherited,
 		"name":      co.Name,
@@ -13,7 +13,7 @@ func billingFlattenCostObject(co projects.CostObject) []map[string]interface{} {
 	}}
 }
 
-func billingExpandCostObject(raw interface{}) projects.CostObject {
+func billingProjectExpandCostObject(raw interface{}) projects.CostObject {
 	var co projects.CostObject
 
 	if raw != nil {

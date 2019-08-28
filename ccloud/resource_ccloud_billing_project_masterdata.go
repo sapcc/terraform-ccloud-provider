@@ -288,7 +288,7 @@ func resourceCCloudBillingProjectMasterdataCreateOrUpdate(d *schema.ResourceData
 		opts.NumberOfEndusers = v.(int)
 	}
 
-	if v := billingExpandCostObject(d.Get("cost_object")); v != (projects.CostObject{}) {
+	if v := billingProjectExpandCostObject(d.Get("cost_object")); v != (projects.CostObject{}) {
 		opts.CostObject = v
 	}
 
@@ -349,7 +349,7 @@ func resourceCCloudBillingProjectMasterdataRead(d *schema.ResourceData, meta int
 	d.Set("business_criticality", project.BusinessCriticality)
 	d.Set("number_of_endusers", project.NumberOfEndusers)
 	d.Set("additional_information", project.AdditionalInformation)
-	d.Set("cost_object", billingFlattenCostObject(project.CostObject))
+	d.Set("cost_object", billingProjectFlattenCostObject(project.CostObject))
 	d.Set("created_at", project.CreatedAt.Format(time.RFC3339))
 	d.Set("changed_at", project.ChangedAt.Format(time.RFC3339))
 	d.Set("changed_by", project.ChangedBy)

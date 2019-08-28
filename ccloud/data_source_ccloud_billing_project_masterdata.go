@@ -238,7 +238,7 @@ func dataSourceCCloudBillingProjectMasterdataRead(d *schema.ResourceData, meta i
 	d.Set("business_criticality", project.BusinessCriticality)
 	d.Set("number_of_endusers", project.NumberOfEndusers)
 	d.Set("additional_information", project.AdditionalInformation)
-	d.Set("cost_object", billingFlattenCostObject(project.CostObject))
+	d.Set("cost_object", billingProjectFlattenCostObject(project.CostObject))
 	d.Set("created_at", project.CreatedAt.Format(time.RFC3339))
 	d.Set("changed_at", project.ChangedAt.Format(time.RFC3339))
 	d.Set("changed_by", project.ChangedBy)
