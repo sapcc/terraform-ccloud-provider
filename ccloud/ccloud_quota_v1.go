@@ -76,7 +76,7 @@ func sanitize(s string) string {
 	return strings.Replace(s, "-", "", -1)
 }
 
-func limesCCloudProjectQuotaV1WaitForProject(client *gophercloud.ServiceClient, domainID string, projectID string, timeout time.Duration) error {
+func limesCCloudProjectQuotaV1WaitForProject(client *gophercloud.ServiceClient, domainID string, projectID string, services *limes.QuotaRequest, timeout time.Duration) error {
 	var msg string
 	var err error
 
@@ -86,7 +86,7 @@ func limesCCloudProjectQuotaV1WaitForProject(client *gophercloud.ServiceClient, 
 		// Retryable case, when timeout is set
 		waitForAgent := &resource.StateChangeConf{
 			Target:         []string{"active"},
-			Refresh:        limesCCloudProjectQuotaV1GetQuota(client, domainID, projectID, timeout),
+			Refresh:        limesCCloudProjectQuotaV1GetQuota(client, domainID, projectID, services, timeout),
 			Timeout:        timeout,
 			Delay:          1 * time.Second,
 			MinTimeout:     1 * time.Second,
@@ -95,7 +95,7 @@ func limesCCloudProjectQuotaV1WaitForProject(client *gophercloud.ServiceClient, 
 		_, err = waitForAgent.WaitForState()
 	} else {
 		// When timeout is not set, just get the agent
-		_, msg, err = limesCCloudProjectQuotaV1GetQuota(client, domainID, projectID, timeout)()
+		_, msg, err = limesCCloudProjectQuotaV1GetQuota(client, domainID, projectID, services, timeout)()
 	}
 
 	if len(msg) > 0 && msg != "active" {
@@ -109,7 +109,7 @@ func limesCCloudProjectQuotaV1WaitForProject(client *gophercloud.ServiceClient, 
 	return nil
 }
 
-func limesCCloudProjectQuotaV1GetQuota(client *gophercloud.ServiceClient, domainID string, projectID string, timeout time.Duration) resource.StateRefreshFunc {
+func limesCCloudProjectQuotaV1GetQuota(client *gophercloud.ServiceClient, domainID string, projectID string, services *limes.QuotaRequest, timeout time.Duration) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		quota, err := projects.Get(client, domainID, projectID, projects.GetOpts{}).Extract()
 		if err != nil {
@@ -122,8 +122,8 @@ func limesCCloudProjectQuotaV1GetQuota(client *gophercloud.ServiceClient, domain
 
 		// detect whether the quota is fully initialized before processing
 		// otherwise further PUT will return "no project report for resource" 500 error
-		for _, service := range quota.Services {
-			if len(service.Resources) == 0 && timeout > 0 {
+		for k, service := range quota.Services {
+			if _, ok := (*services)[k]; ok && len(service.Resources) == 0 && timeout > 0 {
 				// Retryable case, when timeout is set
 				return nil, fmt.Sprintf("There are empty resources: %v", service.Resources), nil
 			}

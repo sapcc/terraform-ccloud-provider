@@ -120,13 +120,6 @@ func resourceCCloudProjectQuotaV1CreateOrUpdate(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error creating OpenStack limes client: %s", err)
 	}
 
-	if d.Id() == "" {
-		// when the project was just created, it may not yet appeared in the limes
-		if err := limesCCloudProjectQuotaV1WaitForProject(client, domainID, projectID, d.Timeout(schema.TimeoutCreate)); err != nil {
-			return err
-		}
-	}
-
 	for _service, resources := range SERVICES {
 		service := sanitize(_service)
 		if _, ok := d.GetOk(service); ok && d.HasChange(service) {
@@ -144,6 +137,13 @@ func resourceCCloudProjectQuotaV1CreateOrUpdate(d *schema.ResourceData, meta int
 				}
 			}
 			services[_service] = quota
+		}
+	}
+
+	if d.Id() == "" {
+		// when the project was just created, it may not yet appeared in the limes
+		if err := limesCCloudProjectQuotaV1WaitForProject(client, domainID, projectID, &services, d.Timeout(schema.TimeoutCreate)); err != nil {
+			return err
 		}
 	}
 
