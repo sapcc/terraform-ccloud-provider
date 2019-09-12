@@ -1,9 +1,13 @@
 package ccloud
 
 import (
+	"github.com/hashicorp/terraform/helper/mutexkv"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+// This is a global MutexKV for use within this plugin.
+var osMutexKV = mutexkv.NewMutexKV()
 
 // Provider returns a schema.Provider for OpenStack.
 func Provider() terraform.ResourceProvider {
@@ -179,18 +183,11 @@ func Provider() terraform.ResourceProvider {
 				Description: descriptions["key"],
 			},
 
-			"swauth": {
+			"delayed_auth": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OS_SWAUTH", false),
-				Description: descriptions["swauth"],
-			},
-
-			"use_octavia": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("OS_USE_OCTAVIA", false),
-				Description: descriptions["use_octavia"],
+				DefaultFunc: schema.EnvDefaultFunc("OS_DELAYED_AUTH", false),
+				Description: descriptions["delayed_auth"],
 			},
 
 			"cloud": {
@@ -211,6 +208,13 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeMap,
 				Optional:    true,
 				Description: descriptions["endpoint_overrides"],
+			},
+
+			"disable_no_cache_header": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: descriptions["disable_no_cache_header"],
 			},
 		},
 
@@ -296,11 +300,8 @@ func init() {
 
 		"key": "A client private key to authenticate with.",
 
-		"swauth": "Use Swift's authentication system instead of Keystone. Only used for\n" +
-			"interaction with Swift.",
-
-		"use_octavia": "If set to `true`, API requests will go the Load Balancer\n" +
-			"service (Octavia) instead of the Networking service (Neutron).",
+		"delayed_auth": "If set to `true`, OpenStack authorization will be perfomed,\n" +
+			"when the service provider client is called.",
 
 		"cloud": "An entry in a `clouds.yaml` file to use.",
 
@@ -308,6 +309,8 @@ func init() {
 
 		"endpoint_overrides": "A map of services with an endpoint to override what was\n" +
 			"from the Keystone catalog",
+
+		"disable_no_cache_header": "If set to `true`, the HTTP `Cache-Control: no-cache` header will not be added by default to all API requests.",
 	}
 }
 
@@ -338,8 +341,9 @@ func configureProvider(d *schema.ResourceData) (interface{}, error) {
 		ApplicationCredentialID:     d.Get("application_credential_id").(string),
 		ApplicationCredentialName:   d.Get("application_credential_name").(string),
 		ApplicationCredentialSecret: d.Get("application_credential_secret").(string),
-		useOctavia:                  d.Get("use_octavia").(bool),
+		delayedAuth:                 d.Get("delayed_auth").(bool),
 		MaxRetries:                  d.Get("max_retries").(int),
+		DisableNoCacheHeader:        d.Get("disable_no_cache_header").(bool),
 	}
 
 	v, ok := d.GetOkExists("insecure")

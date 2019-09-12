@@ -14,9 +14,10 @@ import (
 // LogRoundTripper satisfies the http.RoundTripper interface and is used to
 // customize the default http client RoundTripper to allow for logging.
 type LogRoundTripper struct {
-	Rt         http.RoundTripper
-	OsDebug    bool
-	MaxRetries int
+	Rt                   http.RoundTripper
+	OsDebug              bool
+	DisableNoCacheHeader bool
+	MaxRetries           int
 }
 
 // RoundTrip performs a round-trip HTTP request and logs relevant information about it.
@@ -30,11 +31,18 @@ func (lrt *LogRoundTripper) RoundTrip(request *http.Request) (*http.Response, er
 	// for future reference, this is how to access the Transport struct:
 	//tlsconfig := lrt.Rt.(*http.Transport).TLSClientConfig
 
+	if !lrt.DisableNoCacheHeader {
+		// set Cache-Control header to no-cache on request to force HTTP caches (if any) to go upstream.
+		// This is a work-around until all Openstack APIs implement proper Cache-Control headers by their own.
+		// The guidelines for this were added to http://specs.openstack.org/openstack/api-sig/guidelines/http/caching.html in 03/2018.
+		request.Header.Set("Cache-Control", "no-cache")
+	}
+
 	var err error
 
 	if lrt.OsDebug {
 		log.Printf("[DEBUG] OpenStack Request URL: %s %s", request.Method, request.URL)
-		log.Printf("[DEBUG] OpenStack Request Headers:\n%s", FormatHeaders(request.Header, "\n"))
+		log.Printf("[DEBUG] OpenStack Request Headers:\n%s", formatHeaders(request.Header, "\n"))
 
 		if request.Body != nil {
 			request.Body, err = lrt.logRequest(request.Body, request.Header.Get("Content-Type"))
@@ -66,7 +74,7 @@ func (lrt *LogRoundTripper) RoundTrip(request *http.Request) (*http.Response, er
 
 	if lrt.OsDebug {
 		log.Printf("[DEBUG] OpenStack Response Code: %d", response.StatusCode)
-		log.Printf("[DEBUG] OpenStack Response Headers:\n%s", FormatHeaders(response.Header, "\n"))
+		log.Printf("[DEBUG] OpenStack Response Headers:\n%s", formatHeaders(response.Header, "\n"))
 
 		response.Body, err = lrt.logResponse(response.Body, response.Header.Get("Content-Type"))
 	}
@@ -145,6 +153,14 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 
 	// Mask known password fields
 	if v, ok := data["auth"].(map[string]interface{}); ok {
+		// v2 auth methods
+		if v, ok := v["passwordCredentials"].(map[string]interface{}); ok {
+			v["password"] = "***"
+		}
+		if v, ok := v["token"].(map[string]interface{}); ok {
+			v["id"] = "***"
+		}
+		// v3 auth methods
 		if v, ok := v["identity"].(map[string]interface{}); ok {
 			if v, ok := v["password"].(map[string]interface{}); ok {
 				if v, ok := v["user"].(map[string]interface{}); ok {

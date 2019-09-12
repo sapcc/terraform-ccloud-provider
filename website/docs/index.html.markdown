@@ -146,6 +146,14 @@ The following arguments are supported:
   also invalidate any region you have set, too. Please see below for more details.
   Please use this at your own risk.
 
+* `disable_no_cache_header` - (Optional) If set to `true`, the HTTP
+  `Cache-Control: no-cache` header will not be added by default to all API requests.
+  If omitted this header is added to all API requests to force HTTP caches (if any)
+  to go upstream instead of serving cached responses.
+
+* `delayed_auth` - (Optional) If set to `true`, OpenStack authorization will be perfomed,
+  when the service provider client is called.
+
 ## Overriding Service API Endpoints
 
 There might be a situation in which you want or need to override an API endpoint

@@ -27,6 +27,9 @@ func CheckDeleted(d *schema.ResourceData, err error, msg string) error {
 	return fmt.Errorf("%s %s: %s", msg, d.Id(), err)
 }
 
+// GetRegion returns the region that was specified in the resource. If a
+// region was not set, the provider-level region is checked. The provider-level
+// region can either be set by the region argument or by OS_REGION_NAME.
 func GetRegion(d *schema.ResourceData, config *Config) string {
 	if v, ok := d.GetOk("region"); ok {
 		return v.(string)
@@ -35,32 +38,42 @@ func GetRegion(d *schema.ResourceData, config *Config) string {
 	return config.Region
 }
 
-// List of headers that need to be redacted
-var REDACT_HEADERS = []string{"x-auth-token", "x-auth-key", "x-service-token",
-	"x-storage-token", "x-account-meta-temp-url-key", "x-account-meta-temp-url-key-2",
-	"x-container-meta-temp-url-key", "x-container-meta-temp-url-key-2", "set-cookie",
-	"x-subject-token"}
-
-// RedactHeaders processes a headers object, returning a redacted list
-func RedactHeaders(headers http.Header) (processedHeaders []string) {
-	for name, header := range headers {
-		for _, v := range header {
-			if strSliceContains(REDACT_HEADERS, name) {
-				processedHeaders = append(processedHeaders, fmt.Sprintf("%v: %v", name, "***"))
-			} else {
-				processedHeaders = append(processedHeaders, fmt.Sprintf("%v: %v", name, v))
-			}
-		}
-	}
-	return
+// List of headers that contain sensitive data.
+var sensitiveHeaders = map[string]struct{}{
+	"x-auth-token":                    {},
+	"x-auth-key":                      {},
+	"x-service-token":                 {},
+	"x-storage-token":                 {},
+	"x-account-meta-temp-url-key":     {},
+	"x-account-meta-temp-url-key-2":   {},
+	"x-container-meta-temp-url-key":   {},
+	"x-container-meta-temp-url-key-2": {},
+	"set-cookie":                      {},
+	"x-subject-token":                 {},
 }
 
-// FormatHeaders processes a headers object plus a deliminator, returning a string
-func FormatHeaders(headers http.Header, seperator string) string {
-	redactedHeaders := RedactHeaders(headers)
+func hideSensitiveHeadersData(headers http.Header) []string {
+	result := make([]string, len(headers))
+	headerIdx := 0
+	for header, data := range headers {
+		if _, ok := sensitiveHeaders[strings.ToLower(header)]; ok {
+			result[headerIdx] = fmt.Sprintf("%s: %s", header, "***")
+		} else {
+			result[headerIdx] = fmt.Sprintf("%s: %s", header, strings.Join(data, " "))
+		}
+		headerIdx++
+	}
+
+	return result
+}
+
+// formatHeaders converts standard http.Header type to a string with separated headers.
+// It will hide data of sensitive headers.
+func formatHeaders(headers http.Header, separator string) string {
+	redactedHeaders := hideSensitiveHeadersData(headers)
 	sort.Strings(redactedHeaders)
 
-	return strings.Join(redactedHeaders, seperator)
+	return strings.Join(redactedHeaders, separator)
 }
 
 // IsSliceContainsStr returns true if the string exists in given slice, ignore case.

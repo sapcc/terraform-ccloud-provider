@@ -48,8 +48,13 @@ type Config struct {
 	ApplicationCredentialSecret string
 	useOctavia                  bool
 	MaxRetries                  int
+	DisableNoCacheHeader        bool
 
-	OsClient *gophercloud.ProviderClient
+	delayedAuth   bool
+	OsClient      *gophercloud.ProviderClient
+	authOpts      *gophercloud.AuthOptions
+	authenticated bool
+	authFailed    error
 }
 
 // LoadAndValidate performs the authentication and initial configuration
@@ -194,14 +199,14 @@ func (c *Config) LoadAndValidate() error {
 	transport := &http.Transport{Proxy: http.ProxyFromEnvironment, TLSClientConfig: config}
 	client.HTTPClient = http.Client{
 		Transport: &LogRoundTripper{
-			Rt:         transport,
-			OsDebug:    osDebug,
-			MaxRetries: c.MaxRetries,
+			Rt:                   transport,
+			OsDebug:              osDebug,
+			DisableNoCacheHeader: c.DisableNoCacheHeader,
+			MaxRetries:           c.MaxRetries,
 		},
 	}
 
-	// If using Swift Authentication, there's no need to validate authentication normally.
-	if !c.Swauth {
+	if !c.delayedAuth {
 		err = openstack.Authenticate(client, *ao)
 		if err != nil {
 			return err
@@ -212,7 +217,31 @@ func (c *Config) LoadAndValidate() error {
 		return fmt.Errorf("max_retries should be a positive value")
 	}
 
+	c.authOpts = ao
 	c.OsClient = client
+
+	return nil
+}
+
+func (c *Config) authenticate() error {
+	if !c.delayedAuth {
+		return nil
+	}
+
+	osMutexKV.Lock("auth")
+	defer osMutexKV.Unlock("auth")
+
+	if c.authFailed != nil {
+		return c.authFailed
+	}
+
+	if !c.authenticated {
+		if err := openstack.Authenticate(c.OsClient, *c.authOpts); err != nil {
+			c.authFailed = err
+			return err
+		}
+		c.authenticated = true
+	}
 
 	return nil
 }
@@ -259,6 +288,10 @@ func (c *Config) getEndpointType() gophercloud.Availability {
 }
 
 func (c *Config) limesV1Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	return resources.NewLimesV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: c.getEndpointType(),
@@ -266,6 +299,10 @@ func (c *Config) limesV1Client(region string) (*gophercloud.ServiceClient, error
 }
 
 func (c *Config) kubernikusV1Client(region string, isAdmin bool) (*Kubernikus, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	serviceType := "kubernikus"
 	if isAdmin {
 		serviceType = "kubernikus-kubernikus"
@@ -279,6 +316,10 @@ func (c *Config) kubernikusV1Client(region string, isAdmin bool) (*Kubernikus, e
 }
 
 func (c *Config) arcV1Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := arc.NewArcV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: c.getEndpointType(),
@@ -295,6 +336,10 @@ func (c *Config) arcV1Client(region string) (*gophercloud.ServiceClient, error) 
 }
 
 func (c *Config) automationV1Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := automation.NewAutomationV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: c.getEndpointType(),
@@ -311,6 +356,10 @@ func (c *Config) automationV1Client(region string) (*gophercloud.ServiceClient, 
 }
 
 func (c *Config) computeV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewComputeV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: c.getEndpointType(),
@@ -327,6 +376,10 @@ func (c *Config) computeV2Client(region string) (*gophercloud.ServiceClient, err
 }
 
 func (c *Config) billingClient(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := billing.NewBilling(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: c.getEndpointType(),
