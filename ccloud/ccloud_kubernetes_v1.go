@@ -201,9 +201,6 @@ func kubernikusKlusterV1GetPhase(klient *Kubernikus, target string, name string)
 			return nil, "", err
 		}
 
-		pretty, _ := json.MarshalIndent(result.Payload, "", "  ")
-		log.Printf("[DEBUG] Payload state response: %s", string(pretty))
-
 		if target != "Terminated" {
 			events, err := klient.GetClusterEvents(operations.NewGetClusterEventsParams().WithName(name), klient.authFunc())
 			if err != nil {
@@ -213,8 +210,6 @@ func kubernikusKlusterV1GetPhase(klient *Kubernikus, target string, name string)
 			if len(events.Payload) > 0 {
 				// check, whether there are error events
 				event := events.Payload[len(events.Payload)-1]
-				pretty, _ = json.MarshalIndent(event, "", "  ")
-				log.Printf("[DEBUG] Latest event response: %s", string(pretty))
 
 				if strings.Contains(event.Reason, "Error") || strings.Contains(event.Reason, "Failed") {
 					return nil, event.Reason, fmt.Errorf(event.Message)
@@ -332,16 +327,10 @@ func kubernikusHandleErrorV1(msg string, err error) error {
 }
 
 func kubernikusUpdateAndWait(klient *Kubernikus, cluster *models.Kluster, target string, pending []string, timeout time.Duration) error {
-	pretty, _ := json.MarshalIndent(cluster, "", "  ")
-	log.Printf("[DEBUG] Payload request: %s", string(pretty))
-
-	result, err := klient.UpdateCluster(operations.NewUpdateClusterParams().WithName(cluster.Name).WithBody(cluster), klient.authFunc())
+	_, err := klient.UpdateCluster(operations.NewUpdateClusterParams().WithName(cluster.Name).WithBody(cluster), klient.authFunc())
 	if err != nil {
 		return kubernikusHandleErrorV1("Error updating cluster", err)
 	}
-
-	pretty, _ = json.MarshalIndent(result.Payload, "", "  ")
-	log.Printf("[DEBUG] Payload response: %s", string(pretty))
 
 	err = kubernikusWaitForClusterV1(klient, cluster.Name, target, pending, timeout)
 	if err != nil {

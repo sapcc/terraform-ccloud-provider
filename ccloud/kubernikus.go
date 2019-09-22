@@ -1,8 +1,12 @@
 package ccloud
 
 import (
+	"fmt"
+	"log"
 	"net/url"
+	"os"
 	"reflect"
+	"strings"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
@@ -16,6 +20,85 @@ import (
 type Kubernikus struct {
 	operations.Client
 	provider *gophercloud.ProviderClient
+}
+
+type kubernikusLogger struct{}
+
+var httpMethods = []string{"GET", "POST", "PATCH", "DELETE", "PUT", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
+
+func (kubernikusLogger) Printf(format string, args ...interface{}) {
+	if len(format) == 0 || format[len(format)-1] != '\n' {
+		format += "\n"
+	}
+	fmt.Fprintf(os.Stderr, format, args...)
+}
+
+func deleteEmpty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if strings.TrimSpace(str) != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
+func printHeaders(cycle string, printed *bool) {
+	if !*printed {
+		log.Printf("[DEBUG] Kubernikus %s Headers:\n", cycle)
+		*printed = true
+	}
+}
+
+func (kubernikusLogger) Debugf(format string, args ...interface{}) {
+	if len(format) == 0 || format[len(format)-1] != '\n' {
+		format += "\n"
+	}
+	//fmt.Fprintf(os.Stderr, format, args...)
+	for _, arg := range args {
+		if v, ok := arg.(string); ok {
+			str := deleteEmpty(strings.Split(v, "\n"))
+			cycle := "Response"
+			if len(str) > 0 {
+				for _, method := range httpMethods {
+					if strings.HasPrefix(str[0], method) {
+						cycle = "Request"
+						break
+					}
+				}
+			}
+			printed := false
+
+			for i, s := range str {
+				if i == 0 && cycle == "Request" {
+					v := strings.SplitN(s, " ", 3)
+					if len(v) > 1 {
+						log.Printf("[DEBUG] Kubernikus %s URL: %s %s", cycle, v[0], v[1])
+					}
+				} else if i == 0 && cycle == "Response" {
+					v := strings.SplitN(s, " ", 2)
+					if len(v) > 1 {
+						log.Printf("[DEBUG] OpenStack %s Code: %s", cycle, v[1])
+					}
+				} else if i == len(str)-1 {
+					debugInfo, err := formatJSON([]byte(s))
+					if err != nil {
+						printHeaders(cycle, &printed)
+						log.Print(s)
+					} else {
+						log.Printf("[DEBUG] Kubernikus %s Body: %s\n", cycle, debugInfo)
+					}
+				} else if strings.HasPrefix(strings.ToLower(s), strings.ToLower("X-Auth-Token:")) {
+					printHeaders(cycle, &printed)
+					v := strings.SplitN(s, ":", 2)
+					log.Printf("%s: ***", v[0])
+				} else {
+					printHeaders(cycle, &printed)
+					log.Print(s)
+				}
+			}
+		}
+	}
 }
 
 func NewKubernikusV1(provider *gophercloud.ProviderClient, eo gophercloud.EndpointOpts) (*Kubernikus, error) {
@@ -36,6 +119,7 @@ func NewKubernikusV1(provider *gophercloud.ProviderClient, eo gophercloud.Endpoi
 	}
 
 	transport := httptransport.New(kurl.Host, kurl.EscapedPath(), []string{kurl.Scheme})
+	transport.SetLogger(kubernikusLogger{})
 	operations := operations.New(transport, strfmt.Default)
 
 	return &Kubernikus{*operations, provider}, nil

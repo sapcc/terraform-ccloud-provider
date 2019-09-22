@@ -1,7 +1,6 @@
 package ccloud
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
@@ -324,13 +323,10 @@ func resourceCCloudKubernetesV1Create(d *schema.ResourceData, meta interface{}) 
 		cluster.Spec.Openstack = *v
 	}
 
-	result, err := klient.CreateCluster(operations.NewCreateClusterParams().WithBody(cluster), klient.authFunc())
+	_, err = klient.CreateCluster(operations.NewCreateClusterParams().WithBody(cluster), klient.authFunc())
 	if err != nil {
 		return kubernikusHandleErrorV1("Error creating cluster", err)
 	}
-
-	pretty, _ := json.MarshalIndent(result.Payload, "", "  ")
-	log.Printf("[DEBUG] Payload create: %s", string(pretty))
 
 	d.SetId(cluster.Name)
 
@@ -372,9 +368,6 @@ func resourceCCloudKubernetesV1Read(d *schema.ResourceData, meta interface{}) er
 		}
 		return err
 	}
-
-	pretty, _ := json.MarshalIndent(result.Payload, "", "  ")
-	log.Printf("[DEBUG] Payload get: %s", string(pretty))
 
 	d.Set("advertise_address", result.Payload.Spec.AdvertiseAddress)
 	d.Set("cluster_cidr", result.Payload.Spec.ClusterCIDR)

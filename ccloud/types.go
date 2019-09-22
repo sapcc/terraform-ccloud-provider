@@ -95,8 +95,12 @@ func (lrt *LogRoundTripper) logRequest(original io.ReadCloser, contentType strin
 			return nil, err
 		}
 
-		debugInfo := lrt.formatJSON(bs.Bytes())
-		log.Printf("[DEBUG] OpenStack Request Body: %s", debugInfo)
+		debugInfo, err := formatJSON(bs.Bytes())
+		if err != nil {
+			log.Printf("[DEBUG] %s", err)
+		} else {
+			log.Printf("[DEBUG] OpenStack Request Body: %s", debugInfo)
+		}
 
 		return ioutil.NopCloser(strings.NewReader(bs.String())), nil
 	}
@@ -117,8 +121,10 @@ func (lrt *LogRoundTripper) logResponse(original io.ReadCloser, contentType stri
 			return nil, err
 		}
 
-		debugInfo := lrt.formatJSON(bs.Bytes())
-		if debugInfo != "" {
+		debugInfo, err := formatJSON(bs.Bytes())
+		if err != nil {
+			log.Printf("[DEBUG] %s", err)
+		} else {
 			log.Printf("[DEBUG] OpenStack Response Body: %s", debugInfo)
 		}
 
@@ -131,24 +137,22 @@ func (lrt *LogRoundTripper) logResponse(original io.ReadCloser, contentType stri
 
 // formatJSON will try to pretty-format a JSON body.
 // It will also mask known fields which contain sensitive information.
-func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
+func formatJSON(raw []byte) (string, error) {
 	var rawData interface{}
 
 	err := json.Unmarshal(raw, &rawData)
 	if err != nil {
-		log.Printf("[DEBUG] Unable to parse OpenStack JSON: %s", err)
-		return string(raw)
+		return string(raw), fmt.Errorf("Unable to parse OpenStack JSON: %s", err)
 	}
 
 	data, ok := rawData.(map[string]interface{})
 	if !ok {
 		pretty, err := json.MarshalIndent(rawData, "", "  ")
 		if err != nil {
-			log.Printf("[DEBUG] Unable to re-marshal OpenStack JSON: %s", err)
-			return string(raw)
+			return string(raw), fmt.Errorf("Unable to re-marshal OpenStack JSON: %s", err)
 		}
 
-		return string(pretty)
+		return string(pretty), nil
 	}
 
 	// Mask known password fields
@@ -179,15 +183,19 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 	// Ignore the catalog
 	if v, ok := data["token"].(map[string]interface{}); ok {
 		if _, ok := v["catalog"]; ok {
-			return ""
+			return "", nil
 		}
+	}
+
+	// Strip kubeconfig
+	if _, ok := data["kubeconfig"].(string); ok {
+		data["kubeconfig"] = "***"
 	}
 
 	pretty, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
-		log.Printf("[DEBUG] Unable to re-marshal OpenStack JSON: %s", err)
-		return string(raw)
+		return string(raw), fmt.Errorf("Unable to re-marshal OpenStack JSON: %s", err)
 	}
 
-	return string(pretty)
+	return string(pretty), nil
 }
