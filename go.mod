@@ -10,7 +10,6 @@ require (
 	github.com/gophercloud/gophercloud v0.4.1-0.20190911201436-1445d4a8917b
 	github.com/gophercloud/utils v0.0.0-20190313033024-0bcc8e728cb5
 	github.com/hashicorp/terraform v0.12.9-0.20190911190618-3293f76dc37a
-	github.com/pkg/errors v0.8.0
 	github.com/sapcc/gophercloud-arc v0.0.0-20190312091753-2e63bfbb62aa
 	github.com/sapcc/gophercloud-billing v0.0.0-20190829163637-d8fd49ec93ce
 	github.com/sapcc/gophercloud-limes v0.0.0-20190715090732-81a981309360

@@ -192,8 +192,6 @@ func (c *Config) LoadAndValidate() error {
 	var osDebug bool
 	if os.Getenv("OS_DEBUG") != "" {
 		osDebug = true
-		// Kubernikus debug
-		os.Setenv("DEBUG", "true")
 	}
 
 	transport := &http.Transport{Proxy: http.ProxyFromEnvironment, TLSClientConfig: config}

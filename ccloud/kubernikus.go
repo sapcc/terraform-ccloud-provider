@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/gophercloud/gophercloud"
-	"github.com/pkg/errors"
 	"github.com/sapcc/kubernikus/pkg/api/client/operations"
 
 	httptransport "github.com/go-openapi/runtime/client"
@@ -78,7 +77,7 @@ func (kubernikusLogger) Debugf(format string, args ...interface{}) {
 				} else if i == 0 && cycle == "Response" {
 					v := strings.SplitN(s, " ", 2)
 					if len(v) > 1 {
-						log.Printf("[DEBUG] OpenStack %s Code: %s", cycle, v[1])
+						log.Printf("[DEBUG] Kubernikus %s Code: %s", cycle, v[1])
 					}
 				} else if i == len(str)-1 {
 					debugInfo, err := formatJSON([]byte(s))
@@ -115,11 +114,17 @@ func NewKubernikusV1(provider *gophercloud.ProviderClient, eo gophercloud.Endpoi
 	}
 
 	if kurl, err = url.Parse(endpoint); err != nil {
-		return nil, errors.Errorf("Parsing the Kubernikus URL failed: %s", err)
+		return nil, fmt.Errorf("Parsing the Kubernikus URL failed: %s", err)
 	}
 
 	transport := httptransport.New(kurl.Host, kurl.EscapedPath(), []string{kurl.Scheme})
-	transport.SetLogger(kubernikusLogger{})
+
+	if osDebug := provider.HTTPClient.Transport.(*LogRoundTripper).OsDebug; osDebug {
+		// enable JSON debug for Kubernikus
+		transport.SetLogger(kubernikusLogger{})
+		transport.Debug = osDebug
+	}
+
 	operations := operations.New(transport, strfmt.Default)
 
 	return &Kubernikus{*operations, provider}, nil
