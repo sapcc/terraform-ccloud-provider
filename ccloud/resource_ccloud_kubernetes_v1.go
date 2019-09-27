@@ -315,6 +315,10 @@ func resourceCCloudKubernetesV1Create(d *schema.ResourceData, meta interface{}) 
 	cluster.Spec.NoCloud = d.Get("no_cloud").(bool)
 	cluster.Spec.ServiceCIDR = d.Get("service_cidr").(string)
 	cluster.Spec.Version = d.Get("version").(string)
+	err = verifySupportedKubernetesVersion(klient, cluster.Spec.Version)
+	if err != nil {
+		return err
+	}
 	cluster.Spec.NodePools, err = kubernikusExpandNodePoolsV1(d.Get("node_pools"))
 	if err != nil {
 		return err
@@ -423,6 +427,10 @@ func resourceCCloudKubernetesV1Update(d *schema.ResourceData, meta interface{}) 
 
 	if v, ok := d.GetOk("version"); ok {
 		cluster.Spec.Version = v.(string)
+		err = verifySupportedKubernetesVersion(klient, cluster.Spec.Version)
+		if err != nil {
+			return err
+		}
 	}
 
 	if v, ok := d.GetOk("openstack.0.security_group_name"); ok {
