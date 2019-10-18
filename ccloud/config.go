@@ -10,6 +10,7 @@ import (
 
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
+	osClient "github.com/gophercloud/utils/client"
 	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/hashicorp/terraform/helper/pathorcontents"
 	"github.com/hashicorp/terraform/terraform"
@@ -188,20 +189,26 @@ func (c *Config) LoadAndValidate() error {
 		config.BuildNameToCertificate()
 	}
 
+	var logger osClient.Logger
 	// if OS_DEBUG is set, log the requests and responses
-	var osDebug bool
 	if os.Getenv("OS_DEBUG") != "" {
-		osDebug = true
+		logger = &osClient.DefaultLogger{}
 	}
 
 	transport := &http.Transport{Proxy: http.ProxyFromEnvironment, TLSClientConfig: config}
 	client.HTTPClient = http.Client{
-		Transport: &LogRoundTripper{
-			Rt:                   transport,
-			OsDebug:              osDebug,
-			DisableNoCacheHeader: c.DisableNoCacheHeader,
-			MaxRetries:           c.MaxRetries,
+		Transport: &osClient.RoundTripper{
+			Rt:         transport,
+			MaxRetries: c.MaxRetries,
+			Logger:     logger,
 		},
+	}
+
+	if !c.DisableNoCacheHeader {
+		extraHeaders := map[string][]string{
+			"Cache-Control": {"no-cache"},
+		}
+		client.HTTPClient.Transport.(*osClient.RoundTripper).SetHeaders(extraHeaders)
 	}
 
 	if !c.delayedAuth {

@@ -1,6 +1,7 @@
 package ccloud
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
@@ -11,6 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/gophercloud/gophercloud"
+	osClient "github.com/gophercloud/utils/client"
 	"github.com/sapcc/kubernikus/pkg/api/client/operations"
 
 	httptransport "github.com/go-openapi/runtime/client"
@@ -23,7 +25,10 @@ type Kubernikus struct {
 
 type kubernikusLogger struct{}
 
-var httpMethods = []string{"GET", "POST", "PATCH", "DELETE", "PUT", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
+var (
+	httpMethods = []string{"GET", "POST", "PATCH", "DELETE", "PUT", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
+	maskHeader  = strings.ToLower("X-Auth-Token:")
+)
 
 func (kubernikusLogger) Printf(format string, args ...interface{}) {
 	if len(format) == 0 || format[len(format)-1] != '\n' {
@@ -87,7 +92,7 @@ func (kubernikusLogger) Debugf(format string, args ...interface{}) {
 					} else {
 						log.Printf("[DEBUG] Kubernikus %s Body: %s\n", cycle, debugInfo)
 					}
-				} else if strings.HasPrefix(strings.ToLower(s), strings.ToLower("X-Auth-Token:")) {
+				} else if strings.HasPrefix(strings.ToLower(s), maskHeader) {
 					printHeaders(cycle, &printed)
 					v := strings.SplitN(s, ":", 2)
 					log.Printf("%s: ***", v[0])
@@ -119,10 +124,10 @@ func NewKubernikusV1(provider *gophercloud.ProviderClient, eo gophercloud.Endpoi
 
 	transport := httptransport.New(kurl.Host, kurl.EscapedPath(), []string{kurl.Scheme})
 
-	if v, ok := provider.HTTPClient.Transport.(*LogRoundTripper); ok && v.OsDebug {
+	if v, ok := provider.HTTPClient.Transport.(*osClient.RoundTripper); ok && v.Logger != nil {
 		// enable JSON debug for Kubernikus
 		transport.SetLogger(kubernikusLogger{})
-		transport.Debug = v.OsDebug
+		transport.Debug = true
 	}
 
 	operations := operations.New(transport, strfmt.Default)
@@ -136,4 +141,37 @@ func (k *Kubernikus) authFunc() runtime.ClientAuthInfoWriterFunc {
 			req.SetHeaderParam("X-AUTH-TOKEN", k.provider.Token())
 			return nil
 		})
+}
+
+// formatJSON is a function to pretty-format a JSON body.
+// It will also mask known fields which contain sensitive information.
+func formatJSON(raw []byte) (string, error) {
+	var rawData interface{}
+
+	err := json.Unmarshal(raw, &rawData)
+	if err != nil {
+		return string(raw), fmt.Errorf("unable to parse OpenStack JSON: %s", err)
+	}
+
+	data, ok := rawData.(map[string]interface{})
+	if !ok {
+		pretty, err := json.MarshalIndent(rawData, "", "  ")
+		if err != nil {
+			return string(raw), fmt.Errorf("unable to re-marshal OpenStack JSON: %s", err)
+		}
+
+		return string(pretty), nil
+	}
+
+	// Strip kubeconfig
+	if _, ok := data["kubeconfig"].(string); ok {
+		data["kubeconfig"] = "***"
+	}
+
+	pretty, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return string(raw), fmt.Errorf("unable to re-marshal OpenStack JSON: %s", err)
+	}
+
+	return string(pretty), nil
 }
