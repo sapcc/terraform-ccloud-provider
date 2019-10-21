@@ -12,8 +12,8 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 	osClient "github.com/gophercloud/utils/client"
 	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/hashicorp/terraform/helper/pathorcontents"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/pathorcontents"
+	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
 	"github.com/sapcc/gophercloud-arc/arc"
 	"github.com/sapcc/gophercloud-billing/billing"
 	"github.com/sapcc/gophercloud-limes/resources"
@@ -54,6 +54,8 @@ type Config struct {
 	authOpts      *gophercloud.AuthOptions
 	authenticated bool
 	authFailed    error
+
+	terraformVersion string
 }
 
 // LoadAndValidate performs the authentication and initial configuration
@@ -150,7 +152,7 @@ func (c *Config) LoadAndValidate() error {
 	}
 
 	// Set UserAgent
-	client.UserAgent.Prepend(terraform.UserAgentString())
+	client.UserAgent.Prepend(httpclient.TerraformUserAgent(c.terraformVersion))
 
 	config := &tls.Config{}
 	if c.CACertFile != "" {
@@ -317,7 +319,7 @@ func (c *Config) kubernikusV1Client(region string, isAdmin bool) (*Kubernikus, e
 		Type:         serviceType,
 		Region:       c.determineRegion(region),
 		Availability: gophercloud.AvailabilityPublic,
-	})
+	}, httpclient.TerraformUserAgent(c.terraformVersion))
 }
 
 func (c *Config) arcV1Client(region string) (*gophercloud.ServiceClient, error) {

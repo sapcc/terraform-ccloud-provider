@@ -9,7 +9,7 @@ require (
 	github.com/go-openapi/validate v0.19.3
 	github.com/gophercloud/gophercloud v0.6.1-0.20191019020556-0907b320e0ac
 	github.com/gophercloud/utils v0.0.0-20191020172814-bd86af96d544
-	github.com/hashicorp/terraform v0.12.9-0.20190911190618-3293f76dc37a
+	github.com/hashicorp/terraform-plugin-sdk v1.1.1
 	github.com/sapcc/gophercloud-arc v0.0.0-20190312091753-2e63bfbb62aa
 	github.com/sapcc/gophercloud-billing v0.0.0-20190829163637-d8fd49ec93ce
 	github.com/sapcc/gophercloud-limes v0.0.0-20190715090732-81a981309360

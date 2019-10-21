@@ -1,9 +1,9 @@
 package ccloud
 
 import (
-	"github.com/hashicorp/terraform/helper/mutexkv"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/mutexkv"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 // This is a global MutexKV for use within this plugin.
@@ -11,7 +11,7 @@ var osMutexKV = mutexkv.NewMutexKV()
 
 // Provider returns a schema.Provider for OpenStack.
 func Provider() terraform.ResourceProvider {
-	return &schema.Provider{
+	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"auth_url": {
 				Type:        schema.TypeString,
@@ -243,9 +243,19 @@ func Provider() terraform.ResourceProvider {
 			"ccloud_kubernetes":                 resourceCCloudKubernetesV1(),
 			"ccloud_kubernetes_v1":              resourceCCloudKubernetesV1(),
 		},
-
-		ConfigureFunc: configureProvider,
 	}
+
+	provider.ConfigureFunc = func(d *schema.ResourceData) (interface{}, error) {
+		terraformVersion := provider.TerraformVersion
+		if terraformVersion == "" {
+			// Terraform 0.12 introduced this field to the protocol
+			// We can therefore assume that if it's missing it's 0.10 or 0.11
+			terraformVersion = "0.11+compatible"
+		}
+		return configureProvider(d, terraformVersion)
+	}
+
+	return provider
 }
 
 var descriptions map[string]string
@@ -314,7 +324,7 @@ func init() {
 	}
 }
 
-func configureProvider(d *schema.ResourceData) (interface{}, error) {
+func configureProvider(d *schema.ResourceData, terraformVersion string) (interface{}, error) {
 	config := Config{
 		CACertFile:                  d.Get("cacert_file").(string),
 		ClientCertFile:              d.Get("cert").(string),
@@ -343,6 +353,7 @@ func configureProvider(d *schema.ResourceData) (interface{}, error) {
 		delayedAuth:                 d.Get("delayed_auth").(bool),
 		MaxRetries:                  d.Get("max_retries").(int),
 		DisableNoCacheHeader:        d.Get("disable_no_cache_header").(bool),
+		terraformVersion:            terraformVersion,
 	}
 
 	v, ok := d.GetOkExists("insecure")

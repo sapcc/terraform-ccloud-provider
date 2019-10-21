@@ -20,7 +20,8 @@ import (
 
 type Kubernikus struct {
 	operations.Client
-	provider *gophercloud.ProviderClient
+	provider  *gophercloud.ProviderClient
+	userAgent string
 }
 
 type kubernikusLogger struct{}
@@ -105,7 +106,7 @@ func (kubernikusLogger) Debugf(format string, args ...interface{}) {
 	}
 }
 
-func NewKubernikusV1(provider *gophercloud.ProviderClient, eo gophercloud.EndpointOpts) (*Kubernikus, error) {
+func NewKubernikusV1(provider *gophercloud.ProviderClient, eo gophercloud.EndpointOpts, ua string) (*Kubernikus, error) {
 	var err error
 	var endpoint string
 	var kurl *url.URL
@@ -132,13 +133,14 @@ func NewKubernikusV1(provider *gophercloud.ProviderClient, eo gophercloud.Endpoi
 
 	operations := operations.New(transport, strfmt.Default)
 
-	return &Kubernikus{*operations, provider}, nil
+	return &Kubernikus{*operations, provider, ua}, nil
 }
 
 func (k *Kubernikus) authFunc() runtime.ClientAuthInfoWriterFunc {
 	return runtime.ClientAuthInfoWriterFunc(
 		func(req runtime.ClientRequest, reg strfmt.Registry) error {
 			req.SetHeaderParam("X-AUTH-TOKEN", k.provider.Token())
+			req.SetHeaderParam("User-Agent", k.userAgent)
 			return nil
 		})
 }
