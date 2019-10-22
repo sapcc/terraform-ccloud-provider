@@ -12,6 +12,7 @@ Maintainers
 
 This provider plugin is maintained by:
 
+  * Anton Khramov (@kayrus)
   * Michael Schmidt (@bugroger)
 
 Requirements
