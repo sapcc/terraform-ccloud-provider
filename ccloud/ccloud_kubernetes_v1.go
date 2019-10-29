@@ -427,8 +427,8 @@ func downloadCredentials(klient *Kubernikus, name string) (string, []map[string]
 func verifySupportedKubernetesVersion(klient *Kubernikus, version string) error {
 	if info, err := klient.Info(nil); err != nil {
 		return fmt.Errorf("Failed to check supported Kubernetes versions: %s", err)
-	} else if !strSliceContains(info.Payload.SupportedClusterVersions, version) {
-		return fmt.Errorf("Kubernikus doesn't support %q Kubernetes version, supported versions: %q", version, info.Payload.SupportedClusterVersions)
+	} else if !strSliceContains(info.Payload.AvailableClusterVersions, version) {
+		return fmt.Errorf("Kubernikus doesn't support %q Kubernetes version, supported versions: %q", version, info.Payload.AvailableClusterVersions)
 	}
 	return nil
 }
