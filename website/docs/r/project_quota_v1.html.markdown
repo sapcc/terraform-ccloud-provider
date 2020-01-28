@@ -93,7 +93,8 @@ The following arguments are supported:
   manage the quota. Changing this forces a new resource to be created.
 
 * `compute` - (Optional) The list of compute resources quota. Consists of
-  `cores`, `instances` and `ram` (Mebibytes).
+  `cores`, `instances`, `ram` (Mebibytes), `server_groups` and
+  `server_group_members`.
 
 * `volumev2` - (Optional) The list of block storage resources quota. Consists of
   `capacity` (Gibibytes), `snapshots` and `volumes`.

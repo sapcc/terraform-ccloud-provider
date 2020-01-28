@@ -19,9 +19,11 @@ var (
 			"cfm_share_capacity": limes.UnitBytes,
 		},
 		"compute": {
-			"cores":     limes.UnitNone,
-			"instances": limes.UnitNone,
-			"ram":       limes.UnitMebibytes,
+			"cores":                limes.UnitNone,
+			"instances":            limes.UnitNone,
+			"ram":                  limes.UnitMebibytes,
+			"server_groups":        limes.UnitNone,
+			"server_group_members": limes.UnitNone,
 		},
 		"volumev2": {
 			"capacity":  limes.UnitGibibytes,
