@@ -215,11 +215,6 @@ The `openstack` block supports:
   Specify this if there are multiple private subnets available. Changing this
   forces a new resource to be created.
 
-* `project_id` - (Optional) The ID of the OpenStack project, where the
-  Kubernikus cluster should be created. Available only withing the `is_admin`
-  flag set to `true`. If not specified, detected automatically. Changing this
-  forces a new resource to be created.
-
 * `router_id` - (Optional) The ID of the network router. Specify this if there
   are multiple network routers available. Changing this forces a new resource to
   be created.

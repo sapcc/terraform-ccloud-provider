@@ -244,13 +244,6 @@ func resourceCCloudKubernetesV1() *schema.Resource {
 							ForceNew:     true,
 							ValidateFunc: validation.NoZeroValues,
 						},
-						"project_id": {
-							Type:         schema.TypeString,
-							Optional:     true,
-							Computed:     true,
-							ForceNew:     true,
-							ValidateFunc: validation.NoZeroValues,
-						},
 						"router_id": {
 							Type:         schema.TypeString,
 							Optional:     true,

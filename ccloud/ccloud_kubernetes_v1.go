@@ -56,7 +56,6 @@ func kubernikusFlattenOpenstackSpecV1(spec *models.OpenstackSpec) []map[string]i
 		"lb_floating_network_id": spec.LBFloatingNetworkID,
 		"lb_subnet_id":           spec.LBSubnetID,
 		"network_id":             spec.NetworkID,
-		"project_id":             spec.ProjectID,
 		"router_id":              spec.RouterID,
 		"security_group_name":    spec.SecurityGroupName,
 	})
@@ -99,9 +98,6 @@ func kubernikusExpandOpenstackSpecV1(raw interface{}) *models.OpenstackSpec {
 					}
 					if v, ok := v["network_id"]; ok {
 						res.NetworkID = v.(string)
-					}
-					if v, ok := v["project_id"]; ok {
-						res.ProjectID = v.(string)
 					}
 					if v, ok := v["router_id"]; ok {
 						res.RouterID = v.(string)

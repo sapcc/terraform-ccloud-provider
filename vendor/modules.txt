@@ -281,7 +281,7 @@ github.com/sapcc/gophercloud-limes/resources/v1/projects
 github.com/sapcc/gophercloud-lyra/automation
 github.com/sapcc/gophercloud-lyra/automation/v1/automations
 github.com/sapcc/gophercloud-lyra/automation/v1/runs
-# github.com/sapcc/kubernikus v1.0.1-0.20191114140311-fb3cbfac29b5
+# github.com/sapcc/kubernikus v1.0.1-0.20200130145221-13142045b03f
 github.com/sapcc/kubernikus/pkg/api/client/operations
 github.com/sapcc/kubernikus/pkg/api/models
 github.com/sapcc/kubernikus/pkg/cmd/printers
