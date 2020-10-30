@@ -10,7 +10,7 @@ func (c *Config) limesV1Client(region string) (*gophercloud.ServiceClient, error
 	return c.CommonServiceClientInit(clients.NewLimesV1, region, "resources")
 }
 
-func (c *Config) kubernikusV1Client(region string, isAdmin bool) (*Kubernikus, error) {
+func (c *Config) kubernikusV1Client(region string, isAdmin bool) (*kubernikus, error) {
 	if err := c.Authenticate(); err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func (c *Config) kubernikusV1Client(region string, isAdmin bool) (*Kubernikus, e
 		serviceType = "kubernikus-kubernikus"
 	}
 
-	return NewKubernikusV1(c, gophercloud.EndpointOpts{
+	return newKubernikusV1(c, gophercloud.EndpointOpts{
 		Type:         serviceType,
 		Region:       c.DetermineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),

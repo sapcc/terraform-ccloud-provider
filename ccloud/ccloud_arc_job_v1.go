@@ -23,7 +23,7 @@ type chefZeroPayload struct {
 }
 
 type chefEnableOptions struct {
-	OmnitruckUrl string `json:"omnitruck_url,omitempty"`
+	OmnitruckURL string `json:"omnitruck_url,omitempty"`
 	ChefVersion  string `json:"chef_version"`
 }
 
@@ -100,7 +100,7 @@ func arcCCloudArcJobV1ParseChefEnable(v []interface{}) string {
 			chef := c.(map[string]interface{})
 
 			if val, ok := chef["omnitruck_url"]; ok {
-				chefEnable.OmnitruckUrl = val.(string)
+				chefEnable.OmnitruckURL = val.(string)
 			}
 			if val, ok := chef["chef_version"]; ok {
 				chefEnable.ChefVersion = val.(string)
@@ -144,7 +144,7 @@ func arcCCloudArcJobV1ParseChefZero(v []interface{}) string {
 				chefZero.NodeName = val.(string)
 			}
 			if val, ok := chef["omnitruck_url"]; ok {
-				chefZero.OmnitruckUrl = val.(string)
+				chefZero.OmnitruckURL = val.(string)
 			}
 			if val, ok := chef["chef_version"]; ok {
 				chefZero.ChefVersion = val.(string)
@@ -206,7 +206,7 @@ func arcCCloudArcJobV1FlattenChef(job *jobs.Job) ([]map[string]interface{}, erro
 	if job.Action == "enable" {
 		return []map[string]interface{}{{
 			"enable": []map[string]interface{}{{
-				"omnitruck_url": chef.OmnitruckUrl,
+				"omnitruck_url": chef.OmnitruckURL,
 				"chef_version":  chef.ChefVersion,
 			}},
 			"zero": []map[string]interface{}{},
@@ -225,7 +225,7 @@ func arcCCloudArcJobV1FlattenChef(job *jobs.Job) ([]map[string]interface{}, erro
 			"debug":         chef.Debug,
 			"nodes":         string(nodes[:]),
 			"node_name":     chef.NodeName,
-			"omnitruck_url": chef.OmnitruckUrl,
+			"omnitruck_url": chef.OmnitruckURL,
 			"chef_version":  chef.ChefVersion,
 		}},
 	}}, nil

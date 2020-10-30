@@ -88,7 +88,7 @@ func expandToNodePoolConfig(v []interface{}) *models.NodePoolConfig {
 	return c
 }
 
-func normalizeJsonString(v interface{}) string {
+func normalizeJSONString(v interface{}) string {
 	json, _ := structure.NormalizeJsonString(v)
 	return json
 }
@@ -102,7 +102,7 @@ func validateURL(v interface{}, k string) (ws []string, errors []error) {
 	return
 }
 
-func validateJsonObject(v interface{}, k string) ([]string, []error) {
+func validateJSONObject(v interface{}, k string) ([]string, []error) {
 	if v == nil || v.(string) == "" {
 		return nil, []error{fmt.Errorf("%q value must not be empty", k)}
 	}
@@ -118,7 +118,7 @@ func validateJsonObject(v interface{}, k string) ([]string, []error) {
 	return nil, nil
 }
 
-func validateJsonArray(v interface{}, k string) ([]string, []error) {
+func validateJSONArray(v interface{}, k string) ([]string, []error) {
 	if v == nil || v.(string) == "" {
 		return nil, []error{fmt.Errorf("%q value must not be empty", k)}
 	}
@@ -147,7 +147,7 @@ func validateTimeout(v interface{}, k string) ([]string, []error) {
 	return nil, nil
 }
 
-func diffSuppressJsonObject(k, old, new string, d *schema.ResourceData) bool {
+func diffSuppressJSONObject(k, old, new string, d *schema.ResourceData) bool {
 	if strSliceContains([]string{"{}", "null", ""}, old) &&
 		strSliceContains([]string{"{}", "null", ""}, new) {
 		return true
@@ -155,7 +155,7 @@ func diffSuppressJsonObject(k, old, new string, d *schema.ResourceData) bool {
 	return false
 }
 
-func diffSuppressJsonArray(k, old, new string, d *schema.ResourceData) bool {
+func diffSuppressJSONArray(k, old, new string, d *schema.ResourceData) bool {
 	if strSliceContains([]string{"[]", "null", ""}, old) &&
 		strSliceContains([]string{"[]", "null", ""}, new) {
 		return true

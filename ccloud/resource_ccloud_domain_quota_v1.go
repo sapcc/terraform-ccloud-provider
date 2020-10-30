@@ -36,7 +36,7 @@ func resourceCCloudDomainQuotaV1() *schema.Resource {
 		},
 	}
 
-	for service, resources := range SERVICES {
+	for service, resources := range limesServices {
 		elem := &schema.Resource{
 			Schema: make(map[string]*schema.Schema, len(resources)),
 		}
@@ -78,7 +78,7 @@ func resourceCCloudDomainQuotaV1Read(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error getting Limes domain: %s", err)
 	}
 
-	for service, resources := range SERVICES {
+	for service, resources := range limesServices {
 		res := make(map[string]float64)
 		for resource := range resources {
 			if quota.Services[service] == nil || quota.Services[service].Resources[resource] == nil {
@@ -107,7 +107,7 @@ func resourceCCloudDomainQuotaV1CreateOrUpdate(d *schema.ResourceData, meta inte
 		return fmt.Errorf("Error creating OpenStack limes client: %s", err)
 	}
 
-	for _service, resources := range SERVICES {
+	for _service, resources := range limesServices {
 		service := sanitize(_service)
 		if _, ok := d.GetOk(service); ok && d.HasChange(service) {
 			log.Printf("[QUOTA] Service Changed: %s", service)

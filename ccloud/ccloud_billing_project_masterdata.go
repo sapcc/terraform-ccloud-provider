@@ -41,7 +41,7 @@ func billingProjectExpandCostObject(raw interface{}) projects.CostObject {
 	return co
 }
 
-// replaceEmpty is a helper function to replace empty fields with another field
+// replaceEmpty is a helper function to replace empty fields with another field.
 func replaceEmpty(d *schema.ResourceData, field string, b string) string {
 	var v interface{}
 	var ok bool

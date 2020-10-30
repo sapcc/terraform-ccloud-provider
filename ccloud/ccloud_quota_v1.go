@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	SERVICES = map[string]map[string]limes.Unit{
+	limesServices = map[string]map[string]limes.Unit{
 		"database": {
 			"cfm_share_capacity": limes.UnitBytes,
 		},

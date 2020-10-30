@@ -166,9 +166,9 @@ func resourceCCloudArcJobV1() *schema.Resource {
 										Type:             schema.TypeString,
 										Optional:         true,
 										ForceNew:         true,
-										ValidateFunc:     validateJsonObject,
-										DiffSuppressFunc: diffSuppressJsonObject,
-										StateFunc:        normalizeJsonString,
+										ValidateFunc:     validateJSONObject,
+										DiffSuppressFunc: diffSuppressJSONObject,
+										StateFunc:        normalizeJSONString,
 									},
 
 									"debug": {
@@ -181,9 +181,9 @@ func resourceCCloudArcJobV1() *schema.Resource {
 										Type:             schema.TypeString,
 										Optional:         true,
 										ForceNew:         true,
-										ValidateFunc:     validateJsonArray,
-										DiffSuppressFunc: diffSuppressJsonArray,
-										StateFunc:        normalizeJsonString,
+										ValidateFunc:     validateJSONArray,
+										DiffSuppressFunc: diffSuppressJSONArray,
+										StateFunc:        normalizeJSONString,
 									},
 
 									"node_name": {

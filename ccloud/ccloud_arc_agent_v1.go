@@ -184,7 +184,7 @@ func arcAgentV1ParseTimeout(raw interface{}) (time.Duration, error) {
 	return time.Duration(0), nil
 }
 
-func ServerV2StateRefreshFunc(client *gophercloud.ServiceClient, instanceID string) resource.StateRefreshFunc {
+func serverV2StateRefreshFunc(client *gophercloud.ServiceClient, instanceID string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		s, err := servers.Get(client, instanceID).Extract()
 		if err != nil {

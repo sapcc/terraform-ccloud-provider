@@ -21,16 +21,16 @@ import (
 )
 
 const (
-	KlusterNameRegex = "^[a-z][-a-z0-9]{0,18}[a-z0-9]?$"
-	PoolNameRegex    = "^[a-z][-\\.a-z0-9]{0,18}[a-z0-9]?$"
+	klusterNameRegex = "^[a-z][-a-z0-9]{0,18}[a-z0-9]?$"
+	poolNameRegex    = "^[a-z][-\\.a-z0-9]{0,18}[a-z0-9]?$"
 )
 
 func kubernikusValidateClusterName(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 
-	if !regexp.MustCompile(KlusterNameRegex).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q must be 1 to 20 characters with lowercase and uppercase letters, numbers and hyphens.", k))
+	if !regexp.MustCompile(klusterNameRegex).MatchString(value) {
+		errors = append(errors,
+			fmt.Errorf("%q must be 1 to 20 characters with lowercase and uppercase letters, numbers and hyphens", k))
 	}
 	return
 }
@@ -38,9 +38,9 @@ func kubernikusValidateClusterName(v interface{}, k string) (ws []string, errors
 func kubernikusValidatePoolName(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 
-	if !regexp.MustCompile(PoolNameRegex).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q must be 1 to 20 characters with lowercase and uppercase letters, numbers, hyphens and dots.", k))
+	if !regexp.MustCompile(poolNameRegex).MatchString(value) {
+		errors = append(errors,
+			fmt.Errorf("%q must be 1 to 20 characters with lowercase and uppercase letters, numbers, hyphens and dots", k))
 	}
 	return
 }
@@ -166,7 +166,7 @@ func kubernikusExpandNodePoolsV1(raw interface{}) ([]models.NodePool, error) {
 	return nil, nil
 }
 
-func kubernikusWaitForClusterV1(klient *Kubernikus, name string, target string, pending []string, timeout time.Duration) error {
+func kubernikusWaitForClusterV1(klient *kubernikus, name string, target string, pending []string, timeout time.Duration) error {
 	// Phase: "Pending","Creating","Running","Terminating","Upgrading"
 	log.Printf("[DEBUG] Waiting for %s cluster to become %s.", name, target)
 
@@ -190,7 +190,7 @@ func kubernikusWaitForClusterV1(klient *Kubernikus, name string, target string, 
 	return err
 }
 
-func kubernikusKlusterV1GetPhase(klient *Kubernikus, target string, name string) resource.StateRefreshFunc {
+func kubernikusKlusterV1GetPhase(klient *kubernikus, target string, name string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		result, err := klient.ShowCluster(operations.NewShowClusterParams().WithName(name), klient.authFunc())
 		if err != nil {
@@ -238,7 +238,7 @@ func kubernikusKlusterV1GetPhase(klient *Kubernikus, target string, name string)
 	}
 }
 
-func kubernikusUpdateNodePoolsV1(klient *Kubernikus, cluster *models.Kluster, oldNodePoolsRaw, newNodePoolsRaw interface{}, target string, pending []string, timeout time.Duration) error {
+func kubernikusUpdateNodePoolsV1(klient *kubernikus, cluster *models.Kluster, oldNodePoolsRaw, newNodePoolsRaw interface{}, target string, pending []string, timeout time.Duration) error {
 	var poolsToKeep []models.NodePool
 	var poolsToDelete []models.NodePool
 	oldNodePools, err := kubernikusExpandNodePoolsV1(oldNodePoolsRaw)
@@ -321,7 +321,7 @@ func kubernikusHandleErrorV1(msg string, err error) error {
 	return err
 }
 
-func kubernikusUpdateAndWait(klient *Kubernikus, cluster *models.Kluster, target string, pending []string, timeout time.Duration) error {
+func kubernikusUpdateAndWait(klient *kubernikus, cluster *models.Kluster, target string, pending []string, timeout time.Duration) error {
 	_, err := klient.UpdateCluster(operations.NewUpdateClusterParams().WithName(cluster.Name).WithBody(cluster), klient.authFunc())
 	if err != nil {
 		return kubernikusHandleErrorV1("Error updating cluster", err)
@@ -335,7 +335,7 @@ func kubernikusUpdateAndWait(klient *Kubernikus, cluster *models.Kluster, target
 	return nil
 }
 
-func getCredentials(klient *Kubernikus, name string, creds string) (string, []map[string]string, error) {
+func getCredentials(klient *kubernikus, name string, creds string) (string, []map[string]string, error) {
 	var err error
 	var kubeConfig []map[string]string
 	var crt *x509.Certificate
@@ -405,7 +405,7 @@ func flattenKubernetesClusterKubeConfig(creds string) ([]map[string]string, *x50
 	return []map[string]string{values}, crt, nil
 }
 
-func downloadCredentials(klient *Kubernikus, name string) (string, []map[string]string, error) {
+func downloadCredentials(klient *kubernikus, name string) (string, []map[string]string, error) {
 	credentials, err := klient.GetClusterCredentials(operations.NewGetClusterCredentialsParams().WithName(name), klient.authFunc())
 	if err != nil {
 		return "", nil, fmt.Errorf("Failed to download Kubernikus kubeconfig: %s", err)
@@ -419,7 +419,7 @@ func downloadCredentials(klient *Kubernikus, name string) (string, []map[string]
 	return credentials.Payload.Kubeconfig, kubeConfig, nil
 }
 
-func verifySupportedKubernetesVersion(klient *Kubernikus, version string) error {
+func verifySupportedKubernetesVersion(klient *kubernikus, version string) error {
 	if info, err := klient.Info(nil); err != nil {
 		return fmt.Errorf("Failed to check supported Kubernetes versions: %s", err)
 	} else if !strSliceContains(info.Payload.AvailableClusterVersions, version) {

@@ -23,7 +23,7 @@ var (
 	maskHeader  = strings.ToLower("X-Auth-Token:")
 )
 
-type Kubernikus struct {
+type kubernikus struct {
 	operations.Client
 	provider  *gophercloud.ProviderClient
 	userAgent string
@@ -89,7 +89,7 @@ func (kubernikusLogger) Debugf(format string, args ...interface{}) {
 	}
 }
 
-func NewKubernikusV1(c *Config, eo gophercloud.EndpointOpts) (*Kubernikus, error) {
+func newKubernikusV1(c *Config, eo gophercloud.EndpointOpts) (*kubernikus, error) {
 	var err error
 	var endpoint string
 	var kurl *url.URL
@@ -122,10 +122,10 @@ func NewKubernikusV1(c *Config, eo gophercloud.EndpointOpts) (*Kubernikus, error
 
 	operations := operations.New(transport, strfmt.Default)
 
-	return &Kubernikus{*operations, c.OsClient, httpclient.TerraformUserAgent(c.TerraformVersion)}, nil
+	return &kubernikus{*operations, c.OsClient, httpclient.TerraformUserAgent(c.TerraformVersion)}, nil
 }
 
-func (k *Kubernikus) authFunc() runtime.ClientAuthInfoWriterFunc {
+func (k *kubernikus) authFunc() runtime.ClientAuthInfoWriterFunc {
 	return runtime.ClientAuthInfoWriterFunc(
 		func(req runtime.ClientRequest, reg strfmt.Registry) error {
 			req.SetHeaderParam("X-AUTH-TOKEN", k.provider.Token())

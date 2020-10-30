@@ -88,9 +88,9 @@ func resourceCCloudAutomationV1() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				ConflictsWith:    []string{"path", "arguments", "environment"},
-				ValidateFunc:     validateJsonObject,
-				DiffSuppressFunc: diffSuppressJsonObject,
-				StateFunc:        normalizeJsonString,
+				ValidateFunc:     validateJSONObject,
+				DiffSuppressFunc: diffSuppressJSONObject,
+				StateFunc:        normalizeJSONString,
 			},
 
 			"log_level": {

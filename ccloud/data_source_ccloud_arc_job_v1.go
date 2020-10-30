@@ -163,7 +163,7 @@ func dataSourceCCloudArcJobV1() *schema.Resource {
 									"attributes": {
 										Type:      schema.TypeString,
 										Computed:  true,
-										StateFunc: normalizeJsonString,
+										StateFunc: normalizeJSONString,
 									},
 
 									"debug": {
@@ -174,7 +174,7 @@ func dataSourceCCloudArcJobV1() *schema.Resource {
 									"nodes": {
 										Type:      schema.TypeString,
 										Computed:  true,
-										StateFunc: normalizeJsonString,
+										StateFunc: normalizeJSONString,
 									},
 
 									"node_name": {

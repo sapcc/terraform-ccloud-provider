@@ -195,7 +195,7 @@ func resourceCCloudArcAgentV1Delete(d *schema.ResourceData, meta interface{}) er
 		stateConf := &resource.StateChangeConf{
 			Pending:    []string{"ACTIVE", "SHUTOFF"},
 			Target:     []string{"DELETED", "SOFT_DELETED"},
-			Refresh:    ServerV2StateRefreshFunc(computeClient, d.Id()),
+			Refresh:    serverV2StateRefreshFunc(computeClient, d.Id()),
 			Timeout:    d.Timeout(schema.TimeoutDelete),
 			Delay:      10 * time.Second,
 			MinTimeout: 3 * time.Second,
