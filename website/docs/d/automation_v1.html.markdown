@@ -49,6 +49,8 @@ attributes are exported:
 * `name` - See Argument Reference above.
 * `repository` - See Argument Reference above.
 * `repository_revision` - See Argument Reference above.
+* `repository_authentication_enabled` - Set to true when a
+  `repository_credentials` is set.
 * `timeout` - See Argument Reference above.
 * `type` - See Argument Reference above.
 * `run_list` - The Chef run list.

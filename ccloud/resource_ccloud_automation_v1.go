@@ -49,6 +49,12 @@ func resourceCCloudAutomationV1() *schema.Resource {
 				ValidateFunc: validation.NoZeroValues,
 			},
 
+			"repository_credentials": {
+				Type:      schema.TypeString,
+				Optional:  true,
+				Sensitive: true,
+			},
+
 			"timeout": {
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -142,6 +148,11 @@ func resourceCCloudAutomationV1() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+
+			"repository_authentication_enabled": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -170,12 +181,13 @@ func resourceCCloudAutomationV1Create(d *schema.ResourceData, meta interface{}) 
 	tags := d.Get("tags").(map[string]interface{})
 
 	createOpts := automations.CreateOpts{
-		Name:               d.Get("name").(string),
-		Repository:         d.Get("repository").(string),
-		RepositoryRevision: d.Get("repository_revision").(string),
-		Timeout:            d.Get("timeout").(int),
-		Tags:               expandToMapStringString(tags),
-		Type:               d.Get("type").(string),
+		Name:                  d.Get("name").(string),
+		Repository:            d.Get("repository").(string),
+		RepositoryRevision:    d.Get("repository_revision").(string),
+		RepositoryCredentials: d.Get("repository_credentials").(string),
+		Timeout:               d.Get("timeout").(int),
+		Tags:                  expandToMapStringString(tags),
+		Type:                  d.Get("type").(string),
 		// Chef
 		RunList:        expandToStringSlice(runList),
 		ChefAttributes: chefAttributes,
@@ -215,6 +227,7 @@ func resourceCCloudAutomationV1Read(d *schema.ResourceData, meta interface{}) er
 	d.Set("name", automation.Name)
 	d.Set("repository", automation.Repository)
 	d.Set("repository_revision", automation.RepositoryRevision)
+	d.Set("repository_authentication_enabled", automation.RepositoryAuthenticationEnabled)
 	d.Set("project_id", automation.ProjectID)
 	d.Set("timeout", automation.Timeout)
 	d.Set("tags", automation.Tags)
@@ -261,6 +274,11 @@ func resourceCCloudAutomationV1Update(d *schema.ResourceData, meta interface{}) 
 	if d.HasChange("repository_revision") {
 		repositoryRevision := d.Get("repository_revision").(string)
 		updateOpts.RepositoryRevision = &repositoryRevision
+	}
+
+	if d.HasChange("repository_credentials") {
+		repositoryCredentials := d.Get("repository_credentials").(string)
+		updateOpts.RepositoryCredentials = &repositoryCredentials
 	}
 
 	if d.HasChange("timeout") {

@@ -10,6 +10,10 @@ description: |-
 
 Use this resource to create a Lyra Automation.
 
+~> **Note:** All arguments and attributes, including repository credentials will
+be stored in the raw state as plaintext.
+[Read more about sensitive data in state](https://www.terraform.io/docs/state/sensitive-data.html).
+
 ## Example Usage
 
 ### Chef automation
@@ -41,6 +45,21 @@ resource "ccloud_automation_v1" "script_automation_1" {
 }
 ```
 
+### Using repository credentials
+
+```hcl
+resource "ccloud_automation_v1" "chef_automation_1" {
+  name                   = "automation"
+  repository             = "https://example.com/org/repo.git"
+  repository_credentials = "githubToken"
+  type                   = "Chef"
+  run_list               = ["recipe[repo::default]"]
+  chef_attributes        = <<EOF
+{"foo": "bar"}
+EOF
+}
+```
+
 ## Argument Reference
 
 * `region` - (Optional) The region in which to obtain the Automation client. If
@@ -56,6 +75,9 @@ resource "ccloud_automation_v1" "script_automation_1" {
 
 * `repository_revision` - (Optional) The repository revision. Defaults to
   `master`.
+
+* `repository_credentials` - (Optional) The credentials needed to access the
+  repository (e.g.: git token or ssh key).
 
 * `timeout` - (Optional) The automation timeout in seconds.
 
@@ -87,6 +109,8 @@ attributes are exported:
 * `name` - See Argument Reference above.
 * `repository` - See Argument Reference above.
 * `repository_revision` - See Argument Reference above.
+* `repository_authentication_enabled` - Set to true when a
+  `repository_credentials` is set.
 * `timeout` - See Argument Reference above.
 * `type` - See Argument Reference above.
 * `run_list` - See Argument Reference above.

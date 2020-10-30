@@ -124,6 +124,11 @@ func dataSourceCCloudAutomationV1() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+
+			"repository_authentication_enabled": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -211,6 +216,7 @@ func dataSourceCCloudAutomationV1Read(d *schema.ResourceData, meta interface{}) 
 	d.Set("name", automation.Name)
 	d.Set("repository", automation.Repository)
 	d.Set("repository_revision", automation.RepositoryRevision)
+	d.Set("repository_authentication_enabled", automation.RepositoryAuthenticationEnabled)
 	d.Set("project_id", automation.ProjectID)
 	d.Set("timeout", automation.Timeout)
 	d.Set("tags", automation.Tags)

@@ -63,6 +63,9 @@ type CreateOpts struct {
 	Repository string `json:"repository" required:"true"`
 	// RepositoryRevision defaults to master, when Type is Chef
 	RepositoryRevision string `json:"repository_revision,omitempty"`
+	// RepositoryCredentials credentials needed to access the repository.
+	// e.g.: git token or ssh key
+	RepositoryCredentials string `json:"repository_credentials,omitempty"`
 	// Timeout defaults to 3600. Must be within 1-86400
 	Timeout int `json:"timeout,omitempty"`
 	// Tags don't work
@@ -120,6 +123,9 @@ type UpdateOpts struct {
 	Repository string `json:"repository,omitempty"`
 	// Repository revision can be unset to empty only for Script Type
 	RepositoryRevision *string `json:"repository_revision,omitempty"`
+	// RepositoryCredentials credentials needed to access the repository.
+	// e.g.: git token or ssh key
+	RepositoryCredentials *string `json:"repository_credentials,omitempty"`
 	// Timeout defaults to 3600. Must be within 1-86400
 	Timeout int `json:"timeout,omitempty"`
 	// Tags don't work

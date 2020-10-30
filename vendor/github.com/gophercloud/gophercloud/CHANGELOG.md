@@ -1,4 +1,16 @@
-## 0.13.0 (Unreleased)
+## 0.14.0 (Unreleased)
+
+IMPROVEMENTS
+
+* Added `identity/v3/endpoints.Endpoint.Enabled` [GH-2030](https://github.com/gophercloud/gophercloud/pull/2030)
+* Added `containerinfra/v1/clusters.Upgrade` [GH-2032](https://github.com/gophercloud/gophercloud/pull/2032)
+* Added `compute/apiversions.List` [GH-2037](https://github.com/gophercloud/gophercloud/pull/2037)
+* Added `compute/apiversions.Get` [GH-2037](https://github.com/gophercloud/gophercloud/pull/2037)
+* Added `compute/v2/servers.ListOpts.IP` [GH-2038](https://github.com/gophercloud/gophercloud/pull/2038)
+* Added `compute/v2/servers.ListOpts.IP6` [GH-2038](https://github.com/gophercloud/gophercloud/pull/2038)
+* Added `compute/v2/servers.ListOpts.UserID` [GH-2038](https://github.com/gophercloud/gophercloud/pull/2038)
+
+## 0.13.0 (September 27, 2020)
 
 IMPROVEMENTS
 
@@ -9,6 +21,11 @@ IMPROVEMENTS
 * Added `messaging/v2/queues.CreateOpts.EnableEncryptMessages` [GH-2016](https://github.com/gophercloud/gophercloud/pull/2016)
 * Added `messaging/v2/queues.ListOpts.Name` [GH-2018](https://github.com/gophercloud/gophercloud/pull/2018)
 * Added `messaging/v2/queues.ListOpts.WithCount` [GH-2018](https://github.com/gophercloud/gophercloud/pull/2018)
+* Added `loadbalancer/v2/quotas.Update` [GH-2023](https://github.com/gophercloud/gophercloud/pull/2023)
+* Added `loadbalancer/v2/loadbalancers.ListOpts.AvailabilityZone` [GH-2026](https://github.com/gophercloud/gophercloud/pull/2026)
+* Added `loadbalancer/v2/loadbalancers.CreateOpts.AvailabilityZone` [GH-2026](https://github.com/gophercloud/gophercloud/pull/2026)
+* Added `loadbalancer/v2/loadbalancers.LoadBalancer.AvailabilityZone` [GH-2026](https://github.com/gophercloud/gophercloud/pull/2026)
+* Added `networking/v2/extensions/layer3/routers.ListL3Agents` [GH-2025](https://github.com/gophercloud/gophercloud/pull/2025)
 
 BUG FIXES
 

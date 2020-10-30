@@ -67,6 +67,10 @@ type Automation struct {
 	// The repository revision.
 	RepositoryRevision string `json:"repository_revision"`
 
+	// RepositoryAuthenticationEnabled is set to true when a repository_credentials
+	// is set
+	RepositoryAuthenticationEnabled bool `json:"repository_authentication_enabled"`
+
 	// The parent Openstack project ID.
 	ProjectID string `json:"project_id"`
 
