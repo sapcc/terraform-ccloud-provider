@@ -187,7 +187,7 @@ func resourceCCloudArcAgentV1Delete(d *schema.ResourceData, meta interface{}) er
 		// Wait for the instance to delete before moving on.
 		log.Printf("[DEBUG] Waiting for compute instance (%s) to delete", d.Id())
 
-		computeClient, err := config.computeV2Client(GetRegion(d, config))
+		computeClient, err := config.ComputeV2Client(GetRegion(d, config))
 		if err != nil {
 			return fmt.Errorf("Error creating OpenStack compute client: %s", err)
 		}

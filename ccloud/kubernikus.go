@@ -18,6 +18,11 @@ import (
 	"github.com/sapcc/kubernikus/pkg/api/client/operations"
 )
 
+var (
+	httpMethods = []string{"GET", "POST", "PATCH", "DELETE", "PUT", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
+	maskHeader  = strings.ToLower("X-Auth-Token:")
+)
+
 type Kubernikus struct {
 	operations.Client
 	provider  *gophercloud.ProviderClient
@@ -26,33 +31,11 @@ type Kubernikus struct {
 
 type kubernikusLogger struct{}
 
-var (
-	httpMethods = []string{"GET", "POST", "PATCH", "DELETE", "PUT", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
-	maskHeader  = strings.ToLower("X-Auth-Token:")
-)
-
 func (kubernikusLogger) Printf(format string, args ...interface{}) {
 	if len(format) == 0 || format[len(format)-1] != '\n' {
 		format += "\n"
 	}
 	fmt.Fprintf(os.Stderr, format, args...)
-}
-
-func deleteEmpty(s []string) []string {
-	var r []string
-	for _, str := range s {
-		if strings.TrimSpace(str) != "" {
-			r = append(r, str)
-		}
-	}
-	return r
-}
-
-func printHeaders(cycle string, printed *bool) {
-	if !*printed {
-		log.Printf("[DEBUG] Kubernikus %s Headers:\n", cycle)
-		*printed = true
-	}
 }
 
 func (kubernikusLogger) Debugf(format string, args ...interface{}) {
@@ -139,7 +122,7 @@ func NewKubernikusV1(c *Config, eo gophercloud.EndpointOpts) (*Kubernikus, error
 
 	operations := operations.New(transport, strfmt.Default)
 
-	return &Kubernikus{*operations, c.OsClient, httpclient.TerraformUserAgent(c.terraformVersion)}, nil
+	return &Kubernikus{*operations, c.OsClient, httpclient.TerraformUserAgent(c.TerraformVersion)}, nil
 }
 
 func (k *Kubernikus) authFunc() runtime.ClientAuthInfoWriterFunc {
@@ -149,6 +132,23 @@ func (k *Kubernikus) authFunc() runtime.ClientAuthInfoWriterFunc {
 			req.SetHeaderParam("User-Agent", k.userAgent)
 			return nil
 		})
+}
+
+func deleteEmpty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if strings.TrimSpace(str) != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
+func printHeaders(cycle string, printed *bool) {
+	if !*printed {
+		log.Printf("[DEBUG] Kubernikus %s Headers:\n", cycle)
+		*printed = true
+	}
 }
 
 // formatJSON is a function to pretty-format a JSON body.

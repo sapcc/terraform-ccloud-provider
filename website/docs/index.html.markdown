@@ -52,8 +52,8 @@ The following arguments are supported:
   authentication URL. If omitted, the `OS_AUTH_URL` environment variable is used.
 
 * `cloud` - (Optional; required if `auth_url` is not specified) An entry in a
-  `clouds.yaml` file. See the Converged Cloud `os-client-config`
-  [documentation](https://docs.openstack.org/os-client-config/latest/user/configuration.html)
+  `clouds.yaml` file. See the OpenStack `openstacksdk`
+  [documentation](https://docs.openstack.org/openstacksdk/latest/user/config/configuration.html)
   for more information about `clouds.yaml` files. If omitted, the `OS_CLOUD`
   environment variable is used.
 
@@ -70,17 +70,16 @@ The following arguments are supported:
   `OS_USER_ID` environment variable is used.
 
 * `application_credential_id` - (Optional) (Identity v3 only) The ID of an
-    application credential to authenticate with. An
-    `application_credential_secret` has to bet set along with this parameter.
+  application credential to authenticate with. An
+  `application_credential_secret` has to bet set along with this parameter.
 
 * `application_credential_name` - (Optional) (Identity v3 only) The name of an
-    application credential to authenticate with. Conflicts with the
-    `application_credential_name`, requires `user_id`, or `user_name` and
-    `user_domain_name` (or `user_domain_id`) to be set.
+  application credential to authenticate with. Requires `user_id`, or
+  `user_name` and `user_domain_name` (or `user_domain_id`) to be set.
 
-* `application_credential_secret` - (Optional) (Identity v3 only) The secret of an
-    application credential to authenticate with. Required by
-    `application_credential_id` or `application_credential_name`.
+* `application_credential_secret` - (Optional) (Identity v3 only) The secret of
+  an application credential to authenticate with. Required by
+  `application_credential_id` or `application_credential_name`.
 
 * `tenant_id` - (Optional) The ID of the Tenant (Identity v2) or Project
   (Identity v3) to login with. If omitted, the `OS_TENANT_ID` or
@@ -155,8 +154,11 @@ The following arguments are supported:
   If omitted this header is added to all API requests to force HTTP caches (if any)
   to go upstream instead of serving cached responses.
 
-* `delayed_auth` - (Optional) If set to `true`, OpenStack authorization will be perfomed,
-  when the service provider client is called.
+* `delayed_auth` - (Optional) If set to `false`, OpenStack authorization will be perfomed,
+  every time the service provider client is called. Defaults to `true`.
+
+* `allow_reauth` - (Optional) If set to `false`, OpenStack authorization won't be
+  perfomed automatically, if the initial auth token get expired. Defaults to `true`.
 
 ## Overriding Service API Endpoints
 
