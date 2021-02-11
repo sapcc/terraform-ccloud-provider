@@ -39,10 +39,6 @@ func (kubernikusLogger) Printf(format string, args ...interface{}) {
 }
 
 func (kubernikusLogger) Debugf(format string, args ...interface{}) {
-	if len(format) == 0 || format[len(format)-1] != '\n' {
-		format = format + "\n"
-	}
-	//fmt.Fprintf(os.Stderr, format, args...)
 	for _, arg := range args {
 		if v, ok := arg.(string); ok {
 			str := deleteEmpty(strings.Split(v, "\n"))
