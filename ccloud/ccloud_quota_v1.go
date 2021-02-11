@@ -67,9 +67,9 @@ var (
 func toString(r interface{}) string {
 	switch v := r.(type) {
 	case *limes.ProjectResourceReport:
-		return limes.ValueWithUnit{Value: v.Quota, Unit: v.Unit}.String()
+		return limes.ValueWithUnit{Value: *v.Quota, Unit: v.Unit}.String()
 	case *limes.DomainResourceReport:
-		return limes.ValueWithUnit{Value: v.DomainQuota, Unit: v.Unit}.String()
+		return limes.ValueWithUnit{Value: *v.DomainQuota, Unit: v.Unit}.String()
 	}
 	return ""
 }

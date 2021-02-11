@@ -9,7 +9,8 @@ import (
 	"github.com/gophercloud/utils/terraform/mutexkv"
 )
 
-// Config is a base/foundation of this provider.
+// Use openstackbase.Config as the base/foundation of this provider's
+// Config struct.
 type Config struct {
 	auth.Config
 }
@@ -276,6 +277,8 @@ func init() {
 	descriptions = map[string]string{
 		"auth_url": "The Identity authentication URL.",
 
+		"cloud": "An entry in a `clouds.yaml` file to use.",
+
 		"region": "The OpenStack region to connect to.",
 
 		"user_name": "Username to login with.",
@@ -316,11 +319,16 @@ func init() {
 
 		"cacert_file": "A Custom CA certificate.",
 
-		"endpoint_type": "The catalog endpoint type to use.",
-
 		"cert": "A client certificate to authenticate with.",
 
 		"key": "A client private key to authenticate with.",
+
+		"endpoint_type": "The catalog endpoint type to use.",
+
+		"endpoint_overrides": "A map of services with an endpoint to override what was\n" +
+			"from the Keystone catalog",
+
+		"disable_no_cache_header": "If set to `true`, the HTTP `Cache-Control: no-cache` header will not be added by default to all API requests.",
 
 		"delayed_auth": "If set to `false`, OpenStack authorization will be perfomed,\n" +
 			"every time the service provider client is called. Defaults to `true`.",
@@ -328,14 +336,7 @@ func init() {
 		"allow_reauth": "If set to `false`, OpenStack authorization won't be perfomed\n" +
 			"automatically, if the initial auth token get expired. Defaults to `true`",
 
-		"cloud": "An entry in a `clouds.yaml` file to use.",
-
 		"max_retries": "How many times HTTP connection should be retried until giving up.",
-
-		"endpoint_overrides": "A map of services with an endpoint to override what was\n" +
-			"from the Keystone catalog",
-
-		"disable_no_cache_header": "If set to `true`, the HTTP `Cache-Control: no-cache` header will not be added by default to all API requests.",
 	}
 }
 
@@ -372,7 +373,7 @@ func configureProvider(d *schema.ResourceData, terraformVersion string) (interfa
 			DisableNoCacheHeader:        d.Get("disable_no_cache_header").(bool),
 			TerraformVersion:            terraformVersion,
 			SDKVersion:                  meta.SDKVersionString(),
-			MutexKV:                     *(mutexkv.NewMutexKV()),
+			MutexKV:                     mutexkv.NewMutexKV(),
 		},
 	}
 

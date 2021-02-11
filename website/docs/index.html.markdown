@@ -21,7 +21,9 @@ Since v1.4.8 you can use the provider from a [Terraform Registry](https://regist
 ## Example Usage
 
 ```hcl
+# Define required providers
 terraform {
+required_version = ">= 0.14.0"
   required_providers {
     ccloud = {
       source = "sapcc/ccloud"
@@ -159,6 +161,10 @@ The following arguments are supported:
 
 * `allow_reauth` - (Optional) If set to `false`, OpenStack authorization won't be
   perfomed automatically, if the initial auth token get expired. Defaults to `true`.
+
+* `max_retries` - (Optional) If set to a value greater than 0, the OpenStack
+  client will retry failed HTTP connections and Too Many Requests (429 code)
+  HTTP responses with a `Retry-After` header within the specified value.
 
 ## Overriding Service API Endpoints
 

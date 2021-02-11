@@ -92,15 +92,15 @@ func resourceCCloudProjectQuotaV1Read(d *schema.ResourceData, meta interface{}) 
 	}
 
 	for service, resources := range limesServices {
-		res := make(map[string]float64)
+		res := make(map[string]*uint64)
 		for resource := range resources {
 			if quota.Services[service] == nil || quota.Services[service].Resources[resource] == nil {
 				continue
 			}
-			res[resource] = float64(quota.Services[service].Resources[resource].Quota)
+			res[resource] = quota.Services[service].Resources[resource].Quota
 			log.Printf("[DEBUG] %s.%s: %s", service, resource, toString(quota.Services[service].Resources[resource]))
 		}
-		d.Set(sanitize(service), []map[string]float64{res})
+		d.Set(sanitize(service), []map[string]*uint64{res})
 	}
 
 	d.Set("region", GetRegion(d, config))
